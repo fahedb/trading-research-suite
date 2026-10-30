@@ -13,3 +13,17 @@ Start with [the documentation](docs/README.md). Read
 layout and Git-identity consequences. The original machine-specific progress
 ledger is not distributed. Historical phase documents are reference material;
 no new research phase or protected-data access is authorized by publication.
+
+## Codex integration
+
+The owner requested a Codex-first package with MCP tools and Skills. Initial
+source mapping and the [first-release specification](docs/CODEX_MVP.md) are
+complete. This is a plan; the MCP server, plugin, Skills and guided data import
+are not implemented. The existing synthetic Explorer demo is a UI preview, not
+an engine-driven research example.
+
+NEXT in the public integration plan: a standalone, deterministic synthetic
+example that executes the real engine and opens its recorded trades in the
+real Explorer (step 1 in the specification). Integration work takes place in
+this public distribution and does not advance the source project's historical
+research phases. Both personal import and a downloadable catalog remain planned.
