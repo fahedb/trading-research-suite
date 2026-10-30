@@ -1,13 +1,11 @@
 # Codex integration: first release plan
 
-Status: the first Gaps integration is implemented. See [setup](CODEX.md).
-Personal import, catalog download and a standalone synthetic engine example remain planned.
-
-Version 0.2 adds the [general experiment-authoring workflow](EXPERIMENT_WORKFLOW.md):
-describe an idea, resolve missing semantics, freeze a revision, identify missing
-code/data and integrate through a coding-capable host. Four general MCP tools
-support inventory/review/freeze/retrieval. Generic automatic MCP launch is still
-unimplemented; the Gaps execution tools retain their exact-template boundary.
+Status: version 0.3 supports the frozen Gaps workflow and checked general
+fold-fit experiments on admitted TRAIN/VALIDATION data. See [setup](CODEX.md),
+[authoring](EXPERIMENT_WORKFLOW.md) and [general execution](GENERAL_EXPERIMENTS.md).
+A standalone synthetic research example is included. Personal import and catalog
+download remain planned. The original delivery plan below records how the
+integration was built; current execution boundaries are in ADR-0032.
 
 ## The first working experience
 
@@ -24,12 +22,12 @@ slice and remain requirements for the broader release.
 
 | Component | Current state | Remaining work |
 | --- | --- | --- |
-| Research engine | Strict configurations, features/models/policies, evaluations, simulation, immutable run records, verification | A supported user-facing example that runs without private data |
-| Engine commands | Bounded adapter for the frozen Gaps workflow | Broader templates; no generic shell or arbitrary-code tool |
+| Research engine | Strict configurations, features/models/policies, evaluations, simulation, immutable run records, verification | Synthetic research example included; broader user walkthroughs remain |
+| Engine commands | Exact Gaps adapter plus checked general fold-fit plans | No generic shell or arbitrary-code tool |
 | Background execution | Detached engine worker verified after MCP disconnect on Linux | More platforms and installation environments |
 | Explorer | Real result readers, run overview, trade charts and timeframes | Start/configure it for the user's workspace and publish the completed run to its index |
 | Existing synthetic demo | Generated in-memory prices and trades for UI preview | It is not a research run and cannot stand in for the engine example |
-| MCP server | Local stdio server with seven Gaps tools and four general authoring tools | General prepared-run execution |
+| MCP server | Local stdio server with seven Gaps tools and ten general tools | Guided data admission and broader supported modes |
 | Codex plugin and Skills | Plugin, local marketplace, Gaps and general experiment Skills, and installer | A complete new-experiment walkthrough, public directory submission and more platforms |
 | Personal data | Engine accepts admitted, manifest-backed datasets | Guided import, column/time interpretation, validation and admission |
 | Downloadable catalog | Absent | Approved packages, catalog metadata, integrity checks and download/install flow |
@@ -85,7 +83,8 @@ needs to be relaxed for this plan.
 
 ## Initial MCP tools
 
-General authoring tools added in version 0.2:
+General authoring tools added in version 0.2 (version 0.3 execution tools are
+documented in [the walkthrough](GENERAL_EXPERIMENTS.md)):
 
 | Tool | Purpose | Effects |
 | --- | --- | --- |
@@ -156,8 +155,8 @@ distribution rights and intended access role have been checked. Storage hosting
 is a separate deployment decision; the first slice does not expose a research
 server or distribute internal datasets.
 
-The later synthetic example will get its own explicit clock domain, deterministic
-generator, split policy and manifests. Generation writes a new workspace artifact
+The synthetic example has its own explicit clock domain, deterministic
+generator, split policy and manifests. Generation writes a new external artifact
 and never modifies existing datasets. Research access remains TRAIN-only for
 the first slice. OOS/LOCKBOX unlocks are not exposed as tools. Synthetic runs
 still use the engine's current unverified execution/cost semantics, with their
@@ -171,7 +170,7 @@ synthetic provenance clearly labelled; no new cost-verification claim is made.
 | 1 | Existing Gaps results through MCP and Explorer | Implemented; recorded-file checks, unchanged source artifacts and real Codex tool invocation verified |
 | 2 | Exact frozen Gaps rerun | Implemented; a canonical rerun completed after MCP disconnect and repeating its plan returned the same run |
 | 3 | Codex plugin and Skill | Installed and discovered in a fresh Codex app-server session; local MCP invocation verified without an LLM call |
-| 4 | Standalone synthetic engine example | Planned; UI preview alone is insufficient |
+| 4 | Standalone synthetic engine example | Implemented with admitted synthetic data and checked preparation; separate from the UI preview |
 | 5 | Personal import and dataset catalog | Planned; both must create validated, identity-pinned datasets |
 | 6 | Public installation polish | Requires a new-user walkthrough with distributable data |
 

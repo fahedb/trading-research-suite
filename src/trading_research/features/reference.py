@@ -28,6 +28,7 @@ __all__ = [
     "GapSensitiveLevelsH1V1",
     "LogReturn1",
     "MultiConfluenceM15V1",
+    "RollingClosePosition",
     "RollingMeanClose",
     "UlsMarketContextV1",
     "UlsPushV7",
@@ -794,6 +795,72 @@ class RollingMeanClose:
         available = positions >= self._window_size - 1
         result[available] = means[positions[available] - (self._window_size - 1)]
         return {"rolling_mean_close": result}
+
+
+class RollingClosePosition:
+    """Closed close's centered position inside a finite trailing high/low range."""
+
+    def __init__(self, window: int = 20) -> None:
+        if type(window) is not int or window <= 0:
+            raise _FeatureContractError("window must be a positive Python int")
+        self._window_size = window
+
+    @property
+    def provider_id(self) -> str:
+        """Return the stable implementation identity."""
+        return "rolling_close_position_v1"
+
+    @property
+    def version(self) -> int:
+        """Return the provider version."""
+        return 1
+
+    @property
+    def feature_names(self) -> tuple[str, ...]:
+        """Declare the centered position output."""
+        return ("rolling_close_position",)
+
+    @property
+    def required_columns(self) -> tuple[str, ...]:
+        """Declare every source observation used by the formula."""
+        return ("high", "low", "close")
+
+    @property
+    def window(self) -> _WindowSpec:
+        """Use observed rows with explicit finite reach and CROSS gap policy."""
+        return _WindowSpec(self._window_size - 1, _GapPolicy.CROSS)
+
+    @property
+    def params(self) -> _Mapping[str, _ParamValue]:
+        """Record the complete semantic configuration."""
+        return {"window": self._window_size}
+
+    @property
+    def cost_hint(self) -> _CostHint:
+        """Declare inexpensive array arithmetic."""
+        return _CostHint.CHEAP
+
+    def compute(self, request: _FeatureRequest) -> _Mapping[str, _npt.NDArray[_np.float64]]:
+        """Return finite-window positions, with zero for an exactly flat range."""
+        close = _np.asarray(request.column("close"), dtype=_np.float64)
+        result = _np.full(request.eval_length, _np.nan, dtype=_np.float64)
+        if close.size < self._window_size:
+            return {"rolling_close_position": result}
+        high = _np.lib.stride_tricks.sliding_window_view(
+            request.column("high"), self._window_size
+        ).max(axis=1)
+        low = _np.lib.stride_tricks.sliding_window_view(
+            request.column("low"), self._window_size
+        ).min(axis=1)
+        span = high - low
+        values = _np.full(span.size, _np.nan, dtype=_np.float64)
+        valid = span > 0
+        values[valid] = (close[self._window_size - 1 :][valid] - low[valid]) / span[valid] - 0.5
+        values[(span == 0) & _np.isfinite(close[self._window_size - 1 :])] = 0.0
+        positions = _np.arange(request.eval_offset, request.eval_offset + request.eval_length)
+        available = positions >= self._window_size - 1
+        result[available] = values[positions[available] - (self._window_size - 1)]
+        return {"rolling_close_position": result}
 
 
 class BarRange:
@@ -4540,6 +4607,7 @@ class GapSensitiveLevelsH1V1:
 
 _FEATURE_PROVIDERS.add("log_return_1", LogReturn1)
 _FEATURE_PROVIDERS.add("rolling_mean_close", RollingMeanClose)
+_FEATURE_PROVIDERS.add("rolling_close_position_v1", RollingClosePosition)
 _FEATURE_PROVIDERS.add("bar_range", BarRange)
 _FEATURE_PROVIDERS.add("gap_sensitive_levels_h1_v1", GapSensitiveLevelsH1V1)
 _FEATURE_PROVIDERS.add("multi_confluence_m15_v1", MultiConfluenceM15V1)

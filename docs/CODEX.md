@@ -49,6 +49,12 @@ and downloading an approved dataset catalog are still planned.
 | `experiment_review` | Finds missing fields and integration tasks in a new experiment specification |
 | `experiment_freeze` | Saves the agreed specification as an immutable revision; does not launch anything |
 | `experiment_get` | Restores and checks a frozen specification before resuming work |
+| `experiment_check` | Checks actual data integrity, features, history and preparation blockers |
+| `experiment_verify` | Runs fixed source checks and records commit-bound evidence |
+| `experiment_prepare` | Freezes a checked executable plan |
+| `experiment_start` | Rechecks and starts the prepared plan once, with bounded resources |
+| `experiment_status` | Reads the general plan's recorded run state |
+| `experiment_results` | Reads hash-checked completed results |
 | `research_capabilities` | Shows what is installed and whether the historical run is present |
 | `research_study` | Explains the frozen template and its assumptions |
 | `research_datasets` | Checks the exact required TRAIN identity using manifest metadata |
@@ -95,13 +101,12 @@ demonstrates the workflow; it does not establish an edge. Cost assumptions and
 execution prices remain unverified. The tools retain these limitations and
 report drawdown by individual fold. Market keys remain native wall-clock.
 
-General experiment planning/freezing is supported. Automatic MCP execution
-supports only the exact existing TRAIN template. General component integration
-uses Codex's coding tools and the suite's authoring contracts; CSV admission and
-catalog downloads remain unimplemented. No sweeps or protected-data unlocks are
-exposed. New runs record the public
-checkout's commit, so their identities differ from the original research run.
-Keep this checkout clean; data and generated files belong in the workspace.
+General checked preparation and execution are supported for ordinary fold-fit
+TRAIN/VALIDATION experiments. See [the walkthrough](GENERAL_EXPERIMENTS.md) for
+the supported limits and synthetic example. Missing component integration uses
+Codex's coding tools. CSV admission and catalog downloads remain unimplemented.
+No sweeps or protected-data unlocks are exposed. New runs record this public
+checkout's commit; data and generated files remain outside the checkout.
 
 For implementation and future work, see [the integration plan](CODEX_MVP.md)
 and [ADR-0030](adr/ADR-0030-codex-gaps-adapter.md). Packaging follows the

@@ -259,8 +259,9 @@ def _fit_model(
     )
 
 
-def test_registries_contain_exactly_seven_zero_arg_models_and_one_representation() -> None:
+def test_registries_contain_reference_models_and_one_representation() -> None:
     assert RESEARCH_MODELS.names() == {
+        "close_position_score_v1",
         "gap_sensitive_gate_v1",
         "multi_confluence_gate_v1",
         "reference_library_v1",

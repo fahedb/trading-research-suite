@@ -172,14 +172,17 @@ class ResearchService:
             "historical_run_available": (
                 self.settings.source_runs_root / "runs" / HISTORICAL_RUN / "manifest.json"
             ).is_file(),
-            "scope": "General experiment authoring; MCP execution supports only frozen Gaps TRAIN",
+            "scope": "General checked fold-fit experiments on TRAIN/VALIDATION; "
+            "exact Gaps tools retained",
             "authoring": {
                 "general_specification_review": True,
                 "immutable_specification_freeze": True,
                 "component_and_dataset_inventory": True,
                 "skill": "research-experiment",
                 "integration_requires": "Coding-capable host, suite checkout and permitted data",
-                "generic_mcp_launch": False,
+                "generic_mcp_launch": True,
+                "launch_boundary": "Frozen spec, explicit config binding, passed checkout checks, "
+                "full input preflight, clean source identity and bounded attempts/resources",
             },
             "data_included": False,
             "personal_import": False,
@@ -459,7 +462,13 @@ class ResearchService:
                 previous = read_json(launches, path.name)
                 if previous["launch_state"] != "launched":
                     raise Refused("An uncertain launch needs operator inspection")
-                if self.status(previous["run_id"])["state"] not in (
+                if previous.get("workflow") == "experiment":
+                    from trading_research_mcp.execution import recorded_state
+
+                    previous_state = recorded_state(self.settings, previous["run_id"])["state"]
+                else:
+                    previous_state = self.status(previous["run_id"])["state"]
+                if previous_state not in (
                     "COMPLETE",
                     "FAILED",
                     "INTERRUPTED",

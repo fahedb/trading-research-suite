@@ -228,6 +228,7 @@ if _typing.TYPE_CHECKING:
     from trading_research.core.interfaces import TradeEvaluator as _TradeEvaluator
     from trading_research.data.gating import AccessGrant as _AccessGrant
     from trading_research.data.gating import SplitPolicy as _SplitPolicy
+
     class _VersionedComponent(_Protocol):
         @property
         def version(self) -> int: ...
@@ -851,6 +852,142 @@ def _lockfile_is_in_sync(repository_root: _Path) -> bool:
     return result.returncode == 0
 
 
+def _preflight_experiment(
+    config: _ResolvedExperimentConfig,
+    *,
+    runtime: _RuntimeEnvironment,
+    max_rows: int = 2_000_000,
+) -> dict[str, object]:
+    """Check permitted inputs and fold features without registering or evaluating."""
+    if type(max_rows) is not int or max_rows <= 0:
+        raise _ContractViolationError("preflight max_rows must be a positive integer")
+    manifest = runtime._registry.resolve(config._dataset_ref).manifest
+    if config._dataset_ref.role.value not in ("train", "validation") or (
+        _classify_access(manifest, runtime._split_policy) is not _AccessClassification.NORMAL
+    ):
+        raise _ContractViolationError("preflight supports normal TRAIN/VALIDATION only")
+    if config.document()["integrity_mode"] != "full":
+        raise _ContractViolationError("preflight requires full integrity")
+    if config._frozen_state is not None or config._folds is None:
+        raise _ContractViolationError("preflight currently supports fold-fit experiments only")
+    if manifest.expected_row_count > max_rows:
+        raise _ContractViolationError("dataset exceeds the preflight admitted-row budget")
+    prepared = _prepare_experiment(config, runtime)
+    grant = _authorize_access(
+        registry=runtime._registry,
+        request=_AccessRequest(config._dataset_ref),
+        policy=runtime._split_policy,
+        context=_AccessContext(
+            session_id=_uuid4(),
+            os_user=_getpass.getuser(),
+            hostname=_socket.gethostname(),
+            pid=_os.getpid(),
+            platform_git_commit=runtime._platform_identity.git_commit,
+            platform_git_dirty=runtime._platform_identity.git_dirty,
+        ),
+        audit_writer=runtime._audit_writer,
+    )
+    columns = _required_market_columns(prepared)
+    source_frame = runtime._loader.load(grant, columns=columns)
+    bounded = _open_bounded_view(
+        loader=runtime._loader,
+        grants=(grant,),
+        context_start=_NativeTimeKey(
+            config._bounds._context_start,
+            runtime._split_policy.time_unit,
+            runtime._split_policy.clock_domain,
+        ),
+        eval_start=_NativeTimeKey(
+            config._bounds._eval_start,
+            runtime._split_policy.time_unit,
+            runtime._split_policy.clock_domain,
+        ),
+        eval_end=_NativeTimeKey(
+            config._bounds._eval_end,
+            runtime._split_policy.time_unit,
+            runtime._split_policy.clock_domain,
+        ),
+        columns=columns,
+    )
+    features = _materialize_features(
+        bounded,
+        prepared._feature_providers,
+        split_policy_identity=runtime._split_policy.identity,
+        platform_identity=runtime._platform_identity,
+        store=runtime._store,
+        policy=_MaterializationPolicy.EPHEMERAL,
+    )
+    override = config._folds._purge_override
+    folds = _generate_walk_forward_folds(
+        view=bounded,
+        features=features,
+        outcome_specs=(() if prepared._training_outcome is None else (prepared._training_outcome,)),
+        fit_rows=config._folds._fit_rows,
+        eval_rows=config._folds._eval_rows,
+        step_rows=config._folds._step_rows,
+        embargo_rows=config._folds._embargo_rows,
+        purge_override=(
+            None if override is None else _PurgeOverride(override._purge_rows, override._reason)
+        ),
+    )
+    if not folds:
+        raise _ContractViolationError("insufficient history for one complete fold")
+    names = tuple(
+        name for provider in prepared._feature_providers for name in provider.feature_names
+    )
+    finite = _np.ones(features.num_rows, dtype=_np.bool_)
+    for name in names:
+        finite &= _np.isfinite(features.column(name))
+    counts = []
+    target_masks = []
+    for outcome in prepared._evaluation_outcomes:
+        targets = _compute_outcomes(source_frame, _view_span_from_bounded_view(bounded), outcome)
+        mask = _np.ones(features.num_rows, dtype=_np.bool_)
+        if not _np.array_equal(targets.keys, features.keys):
+            raise _ContractViolationError("preflight outcome keys differ from feature keys")
+        for name in outcome.target_column_names:
+            mask &= _np.isfinite(targets.column(name))
+        target_masks.append(mask)
+    for fold in folds:
+        fit_count = int(_np.count_nonzero(finite[list(fold._effective_fit_positions)]))
+        start, stop = fold._eval_position_range
+        eval_count = int(_np.count_nonzero(finite[start:stop]))
+        if not fit_count or not eval_count:
+            raise _ContractViolationError(
+                f"fold {fold._index}: insufficient usable feature history after warm-up/gaps"
+            )
+        target_counts = [
+            int(_np.count_nonzero((finite & mask)[start:stop])) for mask in target_masks
+        ]
+        if any(count == 0 for count in target_counts):
+            raise _ContractViolationError(
+                f"fold {fold._index}: insufficient outcome history for the declared horizon"
+            )
+        counts.append(
+            {
+                "fold_index": fold._index,
+                "finite_fit_rows": fit_count,
+                "finite_eval_rows": eval_count,
+                "finite_target_rows": target_counts,
+            }
+        )
+    return {
+        "schema": "research-preflight-v1",
+        "ready": True,
+        "experiment_fingerprint": prepared._identity._experiment_fingerprint,
+        "canonical_candidate": prepared._identity._summary._registration_canonical,
+        "required_columns": list(columns),
+        "feature_columns": list(names),
+        "admitted_rows": manifest.expected_row_count,
+        "evaluation_rows": features.num_rows,
+        "folds": counts,
+        "full_integrity_checked": True,
+        "boundary": "Inputs and finite feature/fold availability checked; "
+        "no fit, evaluation or run. "
+        "This does not prove scientific meaning or guarantee runtime success.",
+    }
+
+
 def run_experiment(
     config: _ResolvedExperimentConfig,
     *,
@@ -882,9 +1019,15 @@ def _register_experiment(
     config: _ResolvedExperimentConfig,
     *,
     runtime: _RuntimeEnvironment,
+    expected_fingerprint: str | None = None,
 ) -> str:
     """Register one PENDING attempt without reading dataset rows."""
     prepared = _prepare_experiment(config, runtime)
+    if (
+        expected_fingerprint is not None
+        and prepared._identity._experiment_fingerprint != expected_fingerprint
+    ):
+        raise _ContractViolationError("prepared experiment fingerprint changed before registration")
     return _register_new_run(
         runs_root=runtime._runs_root,
         identity=prepared._identity,
@@ -1618,6 +1761,7 @@ def _execute_inference_and_simulation(
 ]:
     eval_inputs = _ModelInputs(eval_model_features, eval_representation_frame)
     frozen = prepared._config._frozen_state
+
     def inference() -> _ModelOutputFrame:
         if frozen is None:
             return _infer_model(
@@ -1632,6 +1776,7 @@ def _execute_inference_and_simulation(
             fitted_state=model_state,
             inputs=eval_inputs,
         )
+
     fan_out = _infer_once_and_fan_out(
         inference=inference,
         output_column_names=prepared._model_output_names,
@@ -2002,9 +2147,7 @@ def _persist_column_frame(
     expanded_bytes = sum(int(values.nbytes) for values in arrays.values())
     compressed = expanded_bytes > _RUN_FILE_LIMIT_BYTES
     if expanded_bytes > _RUN_FRAME_EXPANDED_LIMIT_BYTES:
-        raise _ContractViolationError(
-            "run column frame exceeds the 512-MiB expanded archive limit"
-        )
+        raise _ContractViolationError("run column frame exceeds the 512-MiB expanded archive limit")
     encoder = _np.savez_compressed if compressed else _np.savez
     _typing.cast("_typing.Callable[..., None]", encoder)(output, **arrays)
     payload = output.getvalue()

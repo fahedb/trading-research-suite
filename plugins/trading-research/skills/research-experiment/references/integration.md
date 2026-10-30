@@ -82,25 +82,22 @@ actual relevant predictive evidence or an explicit owner-directed exception for
 this experiment. The original Gaps exception cannot be reused automatically.
 Current cost/execution semantics remain unverified. Native market time is not UTC.
 
-## 5. Launch within actual capabilities
+## 5. Prepare and launch
 
-An authorized coding-capable host can use the suite's documented engine CLI for
-the new config after these checks. Inspect `trading-research run --help` in the
-pinned environment, use explicit data/run/policy/audit/repository/lock paths,
-and detached execution. A new spec is not a Gaps plan ID. Do not add a generic
-shell MCP tool or weaken the Gaps allowlist to launch it.
+Use the [launch reference](launch.md) to bind every frozen requirement to the
+resolved configuration and run `experiment_check`. Complete the missing work,
+commit the authorized checkout and run `experiment_verify`. It issues evidence
+only after the fixed checks actually pass. Then use `experiment_prepare` and
+`experiment_start`; do not substitute a direct CLI run when a gate fails.
 
-Record the exact launch intent before calling the engine once, and save the
-returned run ID immediately. Check known run state before any retry; an
-interrupted call has an uncertain outcome until inspected. Read state without
-using reconciling CLI status/list commands as if they were read-only. Never
-modify COMPLETE run files or drop unsuccessful attempts from reporting.
+A pure MCP host can launch a prepared supported experiment, but still needs a
+coding host to implement missing components or provision source data. Report
+unsupported modes explicitly. The Gaps tools retain their exact-template scope.
 
-If the host lacks coding/CLI capabilities, provide the frozen spec and the
-integration checklist, state the missing operation, and stop dependent work.
-Freezing/spec review is supported through MCP; generic launch/admission is not.
-Do not report `ready`, `running` or `complete` merely because the specification
-is complete. No automatic end-to-end support for arbitrary ideas is claimed.
+Use the plan's durable receipt, `experiment_status` and `experiment_results`.
+An uncertain launch requires inspection rather than a fresh attempt. Do not
+remove earlier attempts or mutate COMPLETE artifacts. The check/prepare process
+is not a research evaluation and does not prove arbitrary free-text semantics.
 
 For actual results, preserve file/run/fold provenance, sample counts, undefined
 metrics and cost caveats. Explorer trade pages require recorded TradeLogs;

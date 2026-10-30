@@ -43,6 +43,7 @@ from trading_research.features.reference import (
     GapSensitiveLevelsH1V1,
     LogReturn1,
     MultiConfluenceM15V1,
+    RollingClosePosition,
     RollingMeanClose,
     UlsMarketContextV1,
     UlsPushV7,
@@ -2864,6 +2865,7 @@ class TestOrderingSeamsAndPurity:
 
     def test_registry_is_exact_zero_arg_constructible_and_protocol_conformant(self) -> None:
         expected_types = {
+            "rolling_close_position_v1": RollingClosePosition,
             "gap_sensitive_levels_h1_v1": GapSensitiveLevelsH1V1,
             "log_return_1": LogReturn1,
             "multi_confluence_m15_v1": MultiConfluenceM15V1,
@@ -2875,6 +2877,7 @@ class TestOrderingSeamsAndPurity:
             "zone_trader_v13": ZoneTraderV13,
         }
         expected_costs = {
+            "rolling_close_position_v1": CostHint.CHEAP,
             "bar_range": CostHint.CHEAP,
             "gap_sensitive_levels_h1_v1": CostHint.EXPENSIVE,
             "log_return_1": CostHint.CHEAP,

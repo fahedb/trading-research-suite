@@ -27,8 +27,8 @@ def _command_names() -> set[str]:
     return set(action.choices)
 
 
-def test_cli_has_exactly_four_verbs_and_no_comparison_override() -> None:
-    assert _command_names() == {"run", "status", "list", "verify"}
+def test_cli_has_exactly_five_verbs_and_no_comparison_override() -> None:
+    assert _command_names() == {"run", "status", "list", "verify", "preflight"}
     source = Path(cli.__file__).read_text(encoding="utf-8")
     assert "tolerance" not in source.lower()
 

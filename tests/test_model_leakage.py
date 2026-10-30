@@ -132,6 +132,7 @@ LIVE_MODEL_NAMES = tuple(sorted(RESEARCH_MODELS.names()))
 LIVE_CORPUS_MODEL_NAMES = tuple(sorted(CORPUS_RESEARCH_MODELS.names()))
 COVERED_MODEL_NAMES = frozenset(
     {
+        "close_position_score_v1",
         "gap_sensitive_gate_v1",
         "multi_confluence_gate_v1",
         "reference_library_v1",
@@ -317,7 +318,9 @@ class _ModelHarness:
 def _prepare_model(name: str, *, store: ArtifactStore) -> _ModelHarness:
     model = RESEARCH_MODELS.create(name)
     feature_name = (
-        "zt_event_signed"
+        "rolling_close_position"
+        if name == "close_position_score_v1"
+        else "zt_event_signed"
         if name == "zone_event_gate_v1"
         else "gsl_event_signed"
         if name == "gap_sensitive_gate_v1"

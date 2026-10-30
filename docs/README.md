@@ -22,3 +22,5 @@ your own research files.
 The `phases/`, `roadmap/`, and detailed `research/` documents preserve development
 and methodology notes from the source project. Historical checkpoints and machine
 paths in those notes are reference material, not fresh validation of this release.
+
+- [Checked general experiments and synthetic walkthrough](GENERAL_EXPERIMENTS.md)

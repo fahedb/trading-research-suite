@@ -13,7 +13,7 @@ from trading_research.experiments.orchestration import (
     _run_registered_from_persisted_config,
     _runtime_from_paths,
 )
-from trading_research.experiments.resources import _assert_worker_environment
+from trading_research.experiments.resources import _apply_worker_limits, _assert_worker_environment
 from trading_research.experiments.runs import (
     RunState as _RunState,
 )
@@ -34,6 +34,7 @@ def _main(argv: _Sequence[str] | None = None) -> int:
     args = _parser().parse_args(argv)
     try:
         _assert_worker_environment()
+        _apply_worker_limits(args.max_runtime_seconds, args.max_memory_bytes)
         config = _config_from_document(
             _read_registered_config(runs_root=args.runs_root, run_id=args.run_id)
         )
@@ -73,6 +74,8 @@ def _parser() -> _argparse.ArgumentParser:
     parser.add_argument("--dependency-lock", required=True, type=_absolute_path)
     parser.add_argument("--unlock-gated", action="store_true")
     parser.add_argument("--heartbeat-interval-seconds", type=float, default=5.0)
+    parser.add_argument("--max-runtime-seconds", type=int)
+    parser.add_argument("--max-memory-bytes", type=int)
     return parser
 
 

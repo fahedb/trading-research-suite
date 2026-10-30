@@ -26,6 +26,7 @@ if _typing.TYPE_CHECKING:
     import numpy.typing as _npt
 
 __all__ = [
+    "ClosePositionScore",
     "GapSensitiveGateV1",
     "MultiConfluenceGateV1",
     "ReferenceLibraryModel",
@@ -139,6 +140,71 @@ class StatelessRuleModel:
         """Apply one fixed row-local nonlinear rule."""
         _require_schema(fitted_state, "stateless_rule_v1")
         values = _np.tanh(inputs.features.column(_FEATURE)).astype(_np.float64, copy=False)
+        return _output_frame(self, view=view, keys=inputs.features.keys, values=values)
+
+
+class ClosePositionScore:
+    """Expose one explicitly selected causal feature as a generic score."""
+
+    @property
+    def model_id(self) -> str:
+        """Return the stable model identity."""
+        return "close_position_score_v1"
+
+    @property
+    def version(self) -> int:
+        """Return the contract version."""
+        return 1
+
+    @property
+    def params(self) -> _Mapping[str, _ParamValue]:
+        """Bind the selected feature to the model identity."""
+        return {}
+
+    @property
+    def required_feature_names(self) -> tuple[str, ...]:
+        """Declare the selected feature dependency."""
+        return ("rolling_close_position",)
+
+    @property
+    def required_representation_names(self) -> tuple[str, ...]:
+        """Declare that no representation is needed."""
+        return ()
+
+    @property
+    def output_column_names(self) -> tuple[str, ...]:
+        """Return the generic score name."""
+        return (_OUTPUT,)
+
+    @property
+    def cost_hint(self) -> _CostHint:
+        """Declare no expensive fitting."""
+        return _CostHint.CHEAP
+
+    @property
+    def comparison_tolerance(self) -> _ToleranceSpec | None:
+        """Require exact deterministic comparison."""
+        return None
+
+    def fit(
+        self,
+        view: _ViewSpan,
+        inputs: _ModelInputs,
+        training_targets: _TrainingTargetFrame | None = None,
+    ) -> _FittedPayload:
+        """Keep fitting stateless and reject an unused target channel."""
+        if training_targets is not None:
+            raise _ContractViolationError(
+                "close_position_score_v1 does not accept training targets"
+            )
+        return _FittedPayload(arrays={}, metadata={"state_schema": "close_position_score_v1"})
+
+    def infer(
+        self, view: _ViewSpan, fitted_state: _FittedState, inputs: _ModelInputs
+    ) -> _ModelOutputFrame:
+        """Copy the feature values without looking across rows."""
+        _require_schema(fitted_state, "close_position_score_v1")
+        values = _np.asarray(inputs.features.column("rolling_close_position"), dtype=_np.float64)
         return _output_frame(self, view=view, keys=inputs.features.keys, values=values)
 
 
@@ -515,9 +581,7 @@ class GapSensitiveGateV1:
     ) -> _FittedPayload:
         """Return empty state and refuse an unused target channel."""
         if training_targets is not None:
-            raise _ContractViolationError(
-                "gap_sensitive_gate_v1 does not accept training targets"
-            )
+            raise _ContractViolationError("gap_sensitive_gate_v1 does not accept training targets")
         return _FittedPayload(
             arrays={},
             metadata={"state_schema": "gap_sensitive_gate_v1"},
@@ -534,9 +598,7 @@ class GapSensitiveGateV1:
         event = inputs.features.column(_GSL_FEATURES[0])
         malformed_event = _np.isfinite(event) & ~_np.isin(event, (-1.0, 0.0, 1.0))
         if malformed_event.any():
-            raise _ContractViolationError(
-                "gap_sensitive_gate_v1 received a malformed signed event"
-            )
+            raise _ContractViolationError("gap_sensitive_gate_v1 received a malformed signed event")
         for name in _GSL_FEATURES[1:3]:
             score = inputs.features.column(name)
             malformed_score = _np.isfinite(score) & (
@@ -554,8 +616,7 @@ class GapSensitiveGateV1:
             )
         selected = _np.isin(event, (-1.0, 1.0))
         if any(
-            ~_np.isfinite(inputs.features.column(name)[selected]).all()
-            for name in _GSL_FEATURES
+            ~_np.isfinite(inputs.features.column(name)[selected]).all() for name in _GSL_FEATURES
         ):
             raise _ContractViolationError(
                 "gap_sensitive_gate_v1 event rows require finite diagnostics"
@@ -696,6 +757,7 @@ def _scalar_array(state: _FittedState, name: str) -> float:
 def _output_frame(
     model: (
         StatelessRuleModel
+        | ClosePositionScore
         | SupervisedMeanModel
         | ReferenceLibraryModel
         | UlsPushGateV1
@@ -716,6 +778,7 @@ def _output_frame(
 
 
 _RESEARCH_MODELS.add("stateless_rule_v1", StatelessRuleModel)
+_RESEARCH_MODELS.add("close_position_score_v1", ClosePositionScore)
 _RESEARCH_MODELS.add("supervised_mean_v1", SupervisedMeanModel)
 _RESEARCH_MODELS.add("reference_library_v1", ReferenceLibraryModel)
 _RESEARCH_MODELS.add("gap_sensitive_gate_v1", GapSensitiveGateV1)

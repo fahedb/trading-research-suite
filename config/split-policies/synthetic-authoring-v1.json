@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "adr": "ADR-0032",
+  "policy_version": "synthetic-authoring-v1",
+  "clock_domain": "mt5.synthetic-authoring.wallclock",
+  "time_unit": "seconds",
+  "calendar_time_policy": "native-wallclock-v1",
+  "ranges": {
+    "train": {"start_inclusive_key": 0, "end_inclusive_key": 99999},
+    "validation": {"start_inclusive_key": 100000, "end_inclusive_key": 199999},
+    "oos": {"start_inclusive_key": 200000, "end_inclusive_key": 299999},
+    "lockbox": {"start_inclusive_key": 300000, "end_inclusive_key": 399999}
+  },
+  "provenance": {
+    "normative_source": "docs/adr/ADR-0032-prepared-experiment-launch.md",
+    "ratified_on": "2026-10-30"
+  }
+}

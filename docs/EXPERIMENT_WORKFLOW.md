@@ -37,22 +37,27 @@ metadata, find missing specification fields, freeze a revision and restore it.
 The saved specification is in your external workspace. The existing Gaps tools
 continue to read and rerun their exact supported template.
 
-Generic one-command MCP execution, guided CSV admission and catalog downloads
-are not implemented. Component integration uses the coding host's normal tools;
-a client with only MCP receives a clear handoff when it reaches those limits.
-The Skill itself does not give an LLM extra filesystem, execution or data access.
+General preparation and execution now have a checked path. It verifies actual
+inputs and indicators, requires passing code checks, and refuses stale plans or
+duplicate launches. The first supported scope is ordinary fold-fit experiments
+on admitted TRAIN/VALIDATION data. See [the walkthrough](GENERAL_EXPERIMENTS.md).
+
+Guided CSV admission and catalog downloads remain unimplemented. Missing code
+uses the coding host's normal development tools. The Skill itself does not give
+an LLM extra filesystem, execution or data access.
 
 Install or update using [Research with Codex](CODEX.md), start a new session, and
 describe your experiment. You can explicitly ask Codex to use
-`$research-experiment`. The first integration target should be one concrete new
-experiment so the interview, implementation and results can be checked together.
+`$research-experiment`. A small synthetic example is available to exercise the
+preparation and execution path without private market data.
 
 ## For developers
 
 The entry point is
 [`research-experiment/SKILL.md`](../plugins/trading-research/skills/research-experiment/SKILL.md).
 Its references contain the interview, specification and integration procedures.
-[ADR-0031](adr/ADR-0031-experiment-authoring-workflow.md) records the boundary.
+[ADR-0031](adr/ADR-0031-experiment-authoring-workflow.md) records authoring;
+[ADR-0032](adr/ADR-0032-prepared-experiment-launch.md) adds checked execution.
 
 `experiment_review` checks structural completeness and returns the exact digest.
 It cannot prove that free text is scientifically unambiguous or that a claimed
@@ -63,5 +68,5 @@ it is a local record, not user authentication or a substitute for access checks.
 Automated tests exercise missing fields, conditional strategy requirements,
 immutable revisions, retry/concurrency behavior, digest mismatches and the real
 MCP protocol. Skill validation and host discovery check packaging. These checks
-do not establish the quality of an LLM-led interview or autonomous integration
-of every possible research idea; a new-experiment walkthrough is still needed.
+do not establish the quality of every LLM-led interview or autonomous integration
+of arbitrary research ideas. The synthetic walkthrough exercises a bounded case.

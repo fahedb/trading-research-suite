@@ -19,6 +19,7 @@ from trading_research.experiments.config import (
 )
 from trading_research.experiments.orchestration import (
     _fail_pending_run,
+    _preflight_experiment,
     _register_experiment,
     _runtime_from_paths,
     _RuntimeEnvironment,
@@ -31,6 +32,7 @@ from trading_research.experiments.orchestration import (
 )
 from trading_research.experiments.resources import (
     _THREAD_CLAMPS,
+    _apply_worker_limits,
     _worker_environment,
 )
 from trading_research.experiments.runs import (
@@ -57,7 +59,7 @@ class _DetachedLaunchError(_TradingResearchError):
 
 
 def main(argv: _Sequence[str] | None = None) -> int:
-    """Run exactly one of ``run``, ``status``, ``list``, or ``verify``."""
+    """Dispatch one explicit engine operation."""
     parser = _parser()
     args = parser.parse_args(argv)
     try:
@@ -74,7 +76,13 @@ def _parser() -> _argparse.ArgumentParser:
     run = commands.add_parser("run", help="register and launch one resolved config")
     _add_execution_arguments(run)
     run.add_argument("--foreground", action="store_true")
+    run.add_argument("--expected-fingerprint")
     run.add_argument("--json", action="store_true", dest="json_output")
+
+    preflight = commands.add_parser("preflight", help="check inputs without creating a run")
+    _add_execution_arguments(preflight)
+    preflight.add_argument("--max-rows", type=int, default=2_000_000)
+    preflight.add_argument("--json", action="store_true", dest="json_output")
 
     status = commands.add_parser("status", help="show one run")
     status.add_argument("run_id")
@@ -101,6 +109,8 @@ def _add_execution_arguments(parser: _argparse.ArgumentParser) -> None:
     parser.add_argument("--dependency-lock", required=True, type=_absolute_path)
     parser.add_argument("--unlock-gated", action="store_true")
     parser.add_argument("--heartbeat-interval-seconds", type=float, default=5.0)
+    parser.add_argument("--max-runtime-seconds", type=int)
+    parser.add_argument("--max-memory-bytes", type=int)
 
 
 def _add_scan_arguments(parser: _argparse.ArgumentParser) -> None:
@@ -115,6 +125,17 @@ def _absolute_path(value: str) -> _Path:
 
 
 def _dispatch(args: _argparse.Namespace) -> int:
+    if args.command in ("run", "preflight", "verify"):
+        _apply_worker_limits(args.max_runtime_seconds, args.max_memory_bytes)
+    if args.command == "preflight":
+        if args.unlock_gated:
+            raise ValueError("preflight does not expose protected-data unlocks")
+        config = _load_resolved_config(args.config)
+        _emit(
+            _preflight_experiment(config, runtime=_runtime(args, config), max_rows=args.max_rows),
+            json_output=args.json_output,
+        )
+        return 0
     if args.command == "run":
         return _run_command(args)
     if args.command == "status":
@@ -130,6 +151,8 @@ def _run_command(args: _argparse.Namespace) -> int:
     config = _load_resolved_config(args.config)
     runtime = _runtime(args, config)
     if args.foreground:
+        if args.expected_fingerprint is not None:
+            raise ValueError("expected-fingerprint is supported only for detached launch")
         manifest = _run_experiment(
             config,
             runtime=runtime,
@@ -139,7 +162,9 @@ def _run_command(args: _argparse.Namespace) -> int:
         _emit(_manifest_document(manifest), json_output=args.json_output)
         return 0 if manifest.state is _RunState.COMPLETE else 1
 
-    run_id = _register_experiment(config, runtime=runtime)
+    run_id = _register_experiment(
+        config, runtime=runtime, expected_fingerprint=args.expected_fingerprint
+    )
     command = _worker_command(args, run_id=run_id)
     try:
         launcher = _launch_detached(
@@ -247,6 +272,12 @@ def _worker_command(args: _argparse.Namespace, *, run_id: str) -> list[str]:
     )
     if args.unlock_gated:
         command.append("--unlock-gated")
+    for flag in ("max_runtime_seconds", "max_memory_bytes"):
+        value = getattr(args, flag, None)
+        if value is not None:
+            if value <= 0:
+                raise ValueError(f"{flag} must be positive")
+            command.extend(("--" + flag.replace("_", "-"), str(value)))
     return command
 
 
@@ -267,9 +298,7 @@ def _launch_detached(
     child_environment = _worker_environment(environment)
     unit = f"trading-research-{run_id.lower()}"
     memory_property = (
-        ()
-        if memory_max_bytes is None
-        else (f"--property=MemoryMax={memory_max_bytes}",)
+        () if memory_max_bytes is None else (f"--property=MemoryMax={memory_max_bytes}",)
     )
     systemd_command = (
         "systemd-run",

@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "trading-research",
-  "version": "0.2.0",
-  "description": "Describe and freeze research experiments, plan and implement missing components with Codex, and explore the existing Gaps study.",
+  "version": "0.3.0",
+  "description": "Describe research experiments, build missing components with Codex, check readiness and run prepared experiments locally.",
   "author": {"name": "fahedb"},
   "repository": "https://github.com/fahedb/trading-research-suite",
   "extensions": {

@@ -312,6 +312,12 @@ def test_real_stdio_handshake_results_and_invalid_id(study, tmp_path):
                 "experiment_review",
                 "experiment_freeze",
                 "experiment_get",
+                "experiment_check",
+                "experiment_verify",
+                "experiment_prepare",
+                "experiment_start",
+                "experiment_status",
+                "experiment_results",
             }
             assert tools["research_results"].annotations.readOnlyHint
             assert not tools["research_start"].annotations.readOnlyHint

@@ -1,7 +1,7 @@
 [project]
 name = "trading-research-mcp"
-version = "0.2.0"
-description = "Experiment authoring and local tools for the frozen Gaps research study"
+version = "0.3.0"
+description = "Checked research preparation and local experiment execution for Codex"
 requires-python = ">=3.13,<3.14"
 dependencies = ["mcp>=1.28,<2", "trading-research"]
 

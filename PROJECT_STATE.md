@@ -34,12 +34,21 @@ agreement, missing-component integration, testing and execution handoff.
 See [the workflow](docs/EXPERIMENT_WORKFLOW.md) and
 [ADR-0031](docs/adr/ADR-0031-experiment-authoring-workflow.md).
 
-This is not generic automatic execution: coding integration uses a capable host,
-and the automatic MCP launch tools still accept only the frozen Gaps template.
-No new user strategy or dataset was implemented/evaluated by adding the Skill.
+Version 0.3 adds six general execution tools: input checking, checkout
+verification, immutable preparation, idempotent detached start, status and results.
+The engine's new `preflight` command checks permitted observations, full integrity,
+actual features and usable folds/target horizons before run registration. A new
+finite trailing close-position feature and stateless score model exercise this
+path using a separately generated synthetic TRAIN example. See
+[the walkthrough](docs/GENERAL_EXPERIMENTS.md) and
+[ADR-0032](docs/adr/ADR-0032-prepared-experiment-launch.md).
 
-NEXT: validate one new user-described experiment through the complete workflow,
-then implement general prepared-run tooling and guided dataset admission. A
-standalone synthetic engine example and approved downloadable catalog remain
-release requirements. The existing synthetic Explorer demo is a UI preview only.
-This integration does not advance historical research phases.
+Supported launch scope is ordinary fold-fit TRAIN/VALIDATION experiments with
+clean verified code and bounded resources/attempts. Missing code still uses a
+coding-capable host. No arbitrary strategy's scientific validity is implied by
+passing readiness checks; synthetic results are software evidence only.
+
+NEXT: guided personal-data admission, then an approved downloadable catalog and
+new-user installation walkthroughs. The synthetic research example is distinct
+from the Explorer's illustrative UI demo. Historical research phases do not
+advance through this integration work.

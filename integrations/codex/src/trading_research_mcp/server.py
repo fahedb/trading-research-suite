@@ -10,6 +10,7 @@ from typing import Any
 from mcp.server.fastmcp import FastMCP
 from mcp.types import ToolAnnotations
 
+from trading_research_mcp.execution import ExperimentService
 from trading_research_mcp.service import (
     HISTORICAL_RUN,
     ResearchService,
@@ -39,8 +40,9 @@ START = ToolAnnotations(
 def create_server(config_path: Path) -> FastMCP:
     server = FastMCP(
         "Trading Research",
-        instructions="Use experiment_* tools to review and freeze general research specifications. "
-        "A frozen specification is not a runnable engine config. "
+        instructions="Use experiment_* to review, freeze, check, verify, prepare and launch "
+        "general fold-fit experiments on admitted TRAIN/VALIDATION data. "
+        "A frozen specification alone is not runnable; start requires a checked prepared plan. "
         "research_study/datasets/prepare/start/status/results support only the frozen Gaps study. "
         "Reading results or freezing a specification does not start a run. "
         "Use research_start only when the user requested execution. "
@@ -51,6 +53,9 @@ def create_server(config_path: Path) -> FastMCP:
         if not config_path.is_file():
             raise ValueError("Workspace not configured. Follow docs/CODEX.md in the suite.")
         return ResearchService(Settings.load(config_path))
+
+    def experiments() -> ExperimentService:
+        return ExperimentService(service().settings)
 
     @server.tool(annotations=READ)
     def research_capabilities() -> dict[str, Any]:
@@ -111,6 +116,55 @@ def create_server(config_path: Path) -> FastMCP:
         """Read and check an immutable experiment specification before resuming integration."""
         return SpecificationStore(service().settings).get(experiment_id, revision)
 
+    @server.tool(annotations=WRITE)
+    def experiment_check(
+        experiment_id: str,
+        revision: int,
+        config: dict[str, Any],
+        bindings: dict[str, list[str]],
+        policy_name: str = "adr-0012-v1",
+    ) -> dict[str, Any]:
+        """Check frozen requirements, full data integrity, actual features and fold history.
+
+        Reads permitted TRAIN/VALIDATION observations and writes a check report;
+        does not fit, evaluate or register a research run. Returns blockers.
+        """
+        return experiments().check(experiment_id, revision, config, bindings, policy_name)
+
+    @server.tool(annotations=START)
+    def experiment_verify() -> dict[str, Any]:
+        """Run fixed checkout tests/lint/type checks and save evidence for the clean commit.
+
+        May take several minutes. Uses the authorized local source checkout as code.
+        """
+        return experiments().verify_checkout()
+
+    @server.tool(annotations=WRITE)
+    def experiment_prepare(
+        experiment_id: str,
+        revision: int,
+        config: dict[str, Any],
+        bindings: dict[str, list[str]],
+        policy_name: str = "adr-0012-v1",
+    ) -> dict[str, Any]:
+        """Prepare an immutable launch plan only after data, code, scope and checks pass."""
+        return experiments().prepare(experiment_id, revision, config, bindings, policy_name)
+
+    @server.tool(annotations=START)
+    def experiment_start(plan_id: str) -> dict[str, Any]:
+        """Recheck a prepared plan and launch once, within its frozen attempt/resource budget."""
+        return experiments().start(plan_id)
+
+    @server.tool(annotations=READ)
+    def experiment_status(plan_id: str) -> dict[str, Any]:
+        """Read a general plan's recorded run state without reconciliation."""
+        return experiments().status(plan_id)
+
+    @server.tool(annotations=READ)
+    def experiment_results(plan_id: str) -> dict[str, Any]:
+        """Read hash-checked completed results for a general plan; no new computation."""
+        return experiments().results(plan_id)
+
     return server
 
 
@@ -118,6 +172,14 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     subparsers = parser.add_subparsers(dest="command")
+    demo = subparsers.add_parser(
+        "create-demo", help="Create new explicitly synthetic example inputs"
+    )
+    demo.add_argument("--suite-root", type=Path, required=True)
+    demo.add_argument("--destination", type=Path, required=True)
+    subparsers.add_parser(
+        "verify-checkout", help="Run fixed source checks and save readiness evidence"
+    )
     setup = subparsers.add_parser("configure", help="Save local paths outside the public checkout")
     setup.add_argument("--suite-root", type=Path, required=True)
     setup.add_argument("--source-runs-root", type=Path, required=True)
@@ -125,6 +187,17 @@ def main() -> None:
     setup.add_argument("--workspace", type=Path, required=True)
     setup.add_argument("--explorer-url")
     args = parser.parse_args()
+    if args.command == "create-demo":
+        from trading_research_mcp.demo import create_demo
+
+        print(json.dumps(create_demo(args.destination.absolute(), args.suite_root.resolve())))
+        return
+    if args.command == "verify-checkout":
+        result = ExperimentService(
+            Settings.load(args.config.expanduser().resolve())
+        ).verify_checkout()
+        print(json.dumps(result))
+        raise SystemExit(0 if result["passed"] else 1)
     if args.command == "configure":
         settings = Settings(
             args.suite_root.resolve(),

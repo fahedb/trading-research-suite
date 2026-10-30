@@ -87,10 +87,17 @@ class ExperimentSpec(Document):
     assumptions: list[Text] = Field(default_factory=list, max_length=100)
 
 
+class ExecutionLimits(Document):
+    max_runtime_seconds: Annotated[int, Field(strict=True, ge=1, le=300)]
+    max_memory_bytes: Annotated[int, Field(strict=True, ge=268_435_456, le=4_294_967_296)]
+    max_rows: Annotated[int, Field(strict=True, ge=1, le=2_000_000)]
+
+
 class Approval(Document):
     spec_sha256: Digest
     user_message: Text
     scope: Literal["integrate", "integrate_and_run"]
+    limits: ExecutionLimits | None = None
 
 
 def review_spec(spec: ExperimentSpec) -> dict[str, Any]:
@@ -221,7 +228,7 @@ class SpecificationStore:
                 existing = self.get(spec.experiment_id, spec.revision)
                 if existing["spec_sha256"] != review["spec_sha256"] or existing[
                     "approval"
-                ] != approval.model_dump(mode="json"):
+                ] != approval.model_dump(mode="json", exclude_none=True):
                     raise Refused("A frozen revision cannot be replaced; create a new revision")
                 return existing
             if spec.revision > 1:
@@ -233,7 +240,7 @@ class SpecificationStore:
                 "status": "FROZEN_FOR_INTEGRATION",
                 "spec_sha256": review["spec_sha256"],
                 "specification": review["specification"],
-                "approval": approval.model_dump(mode="json"),
+                "approval": approval.model_dump(mode="json", exclude_none=True),
                 "frozen_unix_ns": time.time_ns(),
                 "authorization_note": "Assistant-reported user instruction; not authentication "
                 "or a substitute for engine access checks.",

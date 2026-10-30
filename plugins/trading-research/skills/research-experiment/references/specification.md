@@ -56,10 +56,18 @@ experiment_freeze(
   approval = {
     spec_sha256: digest returned by review,
     user_message: the actual instruction covering this design,
-    scope: integrate | integrate_and_run
+    scope: integrate | integrate_and_run,
+    limits: {max_runtime_seconds: ..., max_memory_bytes: ..., max_rows: ...}
   }
 )
 ```
+
+When checking/running is in scope, record the agreed numerical limits in the
+approval: wall/CPU seconds (1–300), address-space bytes (256 MiB–4 GiB) and
+admitted rows (1–2,000,000). These must match the human-readable resource decision;
+do not silently enlarge the user's budget. Legacy authoring revisions without
+structured limits can still be read, but cannot launch. Add a linked revision
+within the user's existing authorization rather than rewriting an old approval.
 
 The MCP result is `FROZEN_FOR_INTEGRATION`, with `ready_to_run: false` even when
 all components are listed as available. Nothing was executed or evaluated.

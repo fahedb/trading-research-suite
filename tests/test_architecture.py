@@ -483,6 +483,7 @@ SLICE_3C_LAYER_INVENTORIES = {
 }
 
 SLICE_3C_MODEL_CLASSES = {
+    "close_position_score_v1": "ClosePositionScore",
     "gap_sensitive_gate_v1": "GapSensitiveGateV1",
     "multi_confluence_gate_v1": "MultiConfluenceGateV1",
     "reference_library_v1": "ReferenceLibraryModel",
@@ -532,6 +533,7 @@ SLICE_3D_NEGATIVE_CONTROL_CLASSES = frozenset(
 )
 
 SLICE_3D_COVERED_MODELS = {
+    "close_position_score_v1",
     "gap_sensitive_gate_v1",
     "multi_confluence_gate_v1",
     "reference_library_v1",
@@ -584,7 +586,8 @@ SLICE_3I_DECLARED_EXPORTS = {
     "__main__.py": set(),
 }
 
-SLICE_3I_CLI_VERBS = {"list", "run", "status", "verify"}
+# ADR-0032 adds only the checked-input command; keep the vocabulary closed.
+SLICE_3I_CLI_VERBS = {"list", "preflight", "run", "status", "verify"}
 
 SLICE_3J_QUALIFICATION_TEST_PATH = Path(__file__).with_name("test_phase3_qualification.py")
 SLICE_3J_PERFORMANCE_TEST_PATH = Path(__file__).parent / "performance" / "test_phase3_run_budget.py"
@@ -672,6 +675,7 @@ SLICE_2B_MODULE_SURFACES = {
             "GapSensitiveLevelsH1V1",
             "LogReturn1",
             "MultiConfluenceM15V1",
+            "RollingClosePosition",
             "RollingMeanClose",
             "UlsMarketContextV1",
             "UlsPushV7",
@@ -683,6 +687,7 @@ SLICE_2B_MODULE_SURFACES = {
             "GapSensitiveLevelsH1V1",
             "LogReturn1",
             "MultiConfluenceM15V1",
+            "RollingClosePosition",
             "RollingMeanClose",
             "UlsMarketContextV1",
             "UlsPushV7",
@@ -722,6 +727,7 @@ SLICE_2C_NEGATIVE_CONTROL_CLASSES = frozenset(
 )
 
 SLICE_2C_LIVE_FACTORY_PROVENANCE = {
+    "rolling_close_position_v1": (f"{ROOT_NAME}.features.reference", "RollingClosePosition"),
     "bar_range": (f"{ROOT_NAME}.features.reference", "BarRange"),
     "gap_sensitive_levels_h1_v1": (
         f"{ROOT_NAME}.features.reference",
@@ -9102,6 +9108,7 @@ def test_slice_2b_feature_registry_is_retyped_and_has_exact_references() -> None
     module = importlib.import_module(f"{ROOT_NAME}.features.registry")
     assert module.FEATURE_PROVIDERS.names() == frozenset(
         {
+            "rolling_close_position_v1",
             "bar_range",
             "gap_sensitive_levels_h1_v1",
             "log_return_1",

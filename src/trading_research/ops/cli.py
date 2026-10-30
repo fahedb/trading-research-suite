@@ -44,7 +44,7 @@ if _typing.TYPE_CHECKING:
 
 __all__ = ["main"]
 
-_EXPERIMENT_COMMANDS = frozenset({"run", "status", "list", "verify"})
+_EXPERIMENT_COMMANDS = frozenset({"run", "status", "list", "verify", "preflight"})
 
 
 def main(argv: _Sequence[str] | None = None) -> int:
@@ -64,7 +64,7 @@ def main(argv: _Sequence[str] | None = None) -> int:
 def _parser() -> _argparse.ArgumentParser:
     parser = _argparse.ArgumentParser(
         prog="trading-research",
-        description="Experiment commands: run, status, list, verify; operations follow.",
+        description="Experiment commands: run, status, list, verify, preflight; operations follow.",
     )
     commands = parser.add_subparsers(dest="command", required=True)
 

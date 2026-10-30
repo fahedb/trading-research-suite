@@ -50,6 +50,7 @@ COVERED_PROVIDER_NAMES = frozenset(
         "log_return_1",
         "multi_confluence_m15_v1",
         "rolling_mean_close",
+        "rolling_close_position_v1",
         "uls_market_context_v1",
         "uls_push_v7",
         "zone_context_v1",

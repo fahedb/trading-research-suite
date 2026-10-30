@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import math as _math
 import os as _os
+import resource as _resource
+import signal as _signal
 import typing as _typing
 from dataclasses import dataclass as _dataclass
 from pathlib import Path as _Path
@@ -28,6 +31,26 @@ _MEMORY_BUDGET_TOTAL_FRACTION_NUMERATOR = 4
 _MEMORY_BUDGET_TOTAL_FRACTION_DENOMINATOR = 5
 _DISK_WARNING_BASIS_POINTS = 7_000
 _DISK_REFUSAL_BASIS_POINTS = 9_000
+
+
+def _apply_worker_limits(runtime_seconds: int | None, memory_bytes: int | None) -> None:
+    """Apply optional POSIX limits in this command/worker process only."""
+    for value in (runtime_seconds, memory_bytes):
+        if value is not None and (type(value) is not int or value <= 0):
+            raise _ContractViolationError("worker limits must be positive integers")
+    if memory_bytes is not None:
+        _resource.setrlimit(_resource.RLIMIT_AS, (memory_bytes, memory_bytes))
+    if runtime_seconds is not None:
+
+        def expired(_signum: int, _frame: object) -> None:
+            raise TimeoutError("experiment exceeded its wall/CPU time budget")
+
+        _signal.signal(_signal.SIGALRM, expired)
+        _signal.signal(_signal.SIGXCPU, expired)
+        _signal.alarm(runtime_seconds)
+        usage = _resource.getrusage(_resource.RUSAGE_SELF)
+        cpu_limit = _math.ceil(usage.ru_utime + usage.ru_stime) + runtime_seconds
+        _resource.setrlimit(_resource.RLIMIT_CPU, (cpu_limit, cpu_limit + 1))
 
 
 @_dataclass(frozen=True, slots=True)
@@ -93,7 +116,8 @@ def _effective_worker_count(
     if type(detected_memory) is not int or detected_memory <= 0:
         raise _ContractViolationError("total_memory_bytes must be an exact positive int")
     maximum_budget = (
-        detected_memory * _MEMORY_BUDGET_TOTAL_FRACTION_NUMERATOR
+        detected_memory
+        * _MEMORY_BUDGET_TOTAL_FRACTION_NUMERATOR
         // _MEMORY_BUDGET_TOTAL_FRACTION_DENOMINATOR
     )
     if memory_budget_bytes > maximum_budget:

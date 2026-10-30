@@ -1,6 +1,6 @@
 ---
 name: research-experiment
-description: Turn a user's trading research idea into an explicit experiment, resolve missing decisions, freeze its specification, and integrate required indicators or research components in a coding-capable host. Use for new experiments and strategy variants; use gaps-research for reading or exactly rerunning the existing Gaps study.
+description: Turn a user's trading research idea into an explicit experiment, resolve missing decisions, freeze its specification, integrate missing components, check readiness and launch a prepared experiment. Use for new experiments and strategy variants; use gaps-research for reading or exactly rerunning the existing Gaps study.
 ---
 
 # From idea to experiment
@@ -43,7 +43,8 @@ unknowns remain questions. Known missing implementations may remain tasks.
 
 Once the user's instruction covers this exact specification, call
 `experiment_freeze` with the digest returned by `experiment_review`, the real
-supporting user message and its scope (`integrate` or `integrate_and_run`).
+supporting user message, its scope (`integrate` or `integrate_and_run`), and
+the agreed numerical execution limits when input checking/running is planned.
 Ask for clarification only if that authorization is absent or new material
 choices have not been accepted. Never manufacture a confirmation or treat
 silence as acceptance. Freezing records an agreement; it does not launch a run.
@@ -71,20 +72,34 @@ component mapping, data identities, changed code, test evidence, remaining
 blockers and next action. A code patch, a passed schema and a frozen spec are
 different milestones. Mark each only when its evidence exists.
 
+Translate the frozen design into an engine config and explicit component bindings.
+Use `experiment_check` to expose missing implementations, source columns, history,
+integrity problems and missing checkout verification. This reads permitted
+observations and computes input features; it does not fit or evaluate the idea.
+Fix the actual blockers and check again. Do not change research semantics merely
+to obtain a ready result. A derived indicator may compute during the pipeline;
+its implementation and sufficient source history must exist before launch.
+
 ## Execute and explain
 
-Execution requires the frozen scope to include running, admitted and verified
-data, a resolved engine config, passing required checks, bounded run/resource
-limits and recorded clean code/lock identities. Use the existing engine's
-documented detached CLI from a capable development host; record the invocation
-and returned run ID before any retry. An uncertain start needs inspection, not
-a fresh attempt. A pure MCP host currently has no generic launch tool: hand off
-the ready artifacts and name that missing capability explicitly.
+Commit the completed code in the authorized isolated checkout and use
+`experiment_verify` to run the fixed source checks. Its evidence is bound to the
+clean commit and lockfiles; changing code requires new verification. Keep the
+configured suite and its engine environment pointed at that same checkout.
+
+Use `experiment_prepare` and then `experiment_start` for supported general
+experiments. Preparation requires running scope, full input checks and passing
+checkout verification. Start rechecks evidence, applies the frozen attempt
+budget and returns a durable receipt. An uncertain start needs inspection, not
+a fresh attempt. Use `experiment_status` and `experiment_results` for that plan.
+Read [the launch reference](references/launch.md) for bindings, supported modes,
+resource limits and the explicitly synthetic demonstration.
 
 The `research_prepare`/`research_start` tools still execute only the exact Gaps
 template. Never pass a new specification to them or alter their guard as part of
-a study. They are not the general launch path. Follow the integration reference
-for execution prerequisites and evidence, including Plane-A-first methodology.
+a study. Do not bypass a failed general preparation by calling the engine CLI
+directly. Unsupported modes need a scoped development task; report them clearly.
+Preserve the integration reference's Plane-A-first methodology.
 
 Explain recorded results with sample sizes, unsuccessful/empty outcomes, costs
 and limits. Only promise an Explorer trade view when actual TradeLogs exist;
