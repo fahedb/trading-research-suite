@@ -20,6 +20,7 @@ entry, exit, and surrounding price action.
 
 [Try the demo](docs/GETTING_STARTED.md#try-the-explorer) ·
 [Run your own research](docs/GETTING_STARTED.md#use-your-own-data) ·
+[Research with Codex](docs/CODEX.md) ·
 [Explore the documentation](docs/README.md)
 
 The demo uses made-up prices and trades. They illustrate the interface and say

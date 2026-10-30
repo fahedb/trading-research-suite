@@ -16,14 +16,18 @@ no new research phase or protected-data access is authorized by publication.
 
 ## Codex integration
 
-The owner requested a Codex-first package with MCP tools and Skills. Initial
-source mapping and the [first-release specification](docs/CODEX_MVP.md) are
-complete. This is a plan; the MCP server, plugin, Skills and guided data import
-are not implemented. The existing synthetic Explorer demo is a UI preview, not
-an engine-driven research example.
+The owner selected the existing frozen Gaps TRAIN study for the first Codex
+integration. The local MCP server, seven tools, Codex plugin, workflow Skill and
+installer are implemented. See [Research with Codex](docs/CODEX.md), the
+[release plan](docs/CODEX_MVP.md) and
+[ADR-0030](docs/adr/ADR-0030-codex-gaps-adapter.md).
 
-NEXT in the public integration plan: a standalone, deterministic synthetic
-example that executes the real engine and opens its recorded trades in the
-real Explorer (step 1 in the specification). Integration work takes place in
-this public distribution and does not advance the source project's historical
-research phases. Both personal import and a downloadable catalog remain planned.
+Stored results are read from the owner's external run store. Exact-template
+reruns use a separate workspace and the existing detached engine CLI. No tuning,
+sweeps or protected-data unlocks are exposed. The original source repositories,
+historical runs and immutable dataset roots are not modified by integration.
+
+NEXT: a standalone synthetic engine example for people without the private
+TRAIN dataset, then guided personal-data import and an approved downloadable
+catalog. The existing synthetic Explorer demo remains a UI preview only.
+Integration does not advance the historical research phases.

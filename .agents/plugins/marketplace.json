@@ -1,0 +1,10 @@
+{
+  "name": "trading-research-suite",
+  "interface": {"displayName": "Trading Research Suite"},
+  "plugins": [{
+    "name": "trading-research",
+    "source": {"source": "local", "path": "./plugins/trading-research"},
+    "policy": {"installation": "AVAILABLE", "authentication": "ON_INSTALL"},
+    "category": "Productivity"
+  }]
+}

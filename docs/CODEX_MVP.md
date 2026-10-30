@@ -1,6 +1,7 @@
 # Codex integration: first release plan
 
-Status: mapping and specification complete; integration not implemented.
+Status: the first Gaps integration is implemented. See [setup](CODEX.md).
+Personal import, catalog download and a standalone synthetic engine example remain planned.
 
 ## The first working experience
 
@@ -8,8 +9,9 @@ A user installs the suite, connects it to Codex CLI, and asks for a small resear
 experiment. The engine runs it locally, the assistant explains the recorded
 results, and the user opens the actual trades in the Explorer.
 
-The first working slice uses generated synthetic data and one existing research
-template. Personal-data import and a downloadable dataset catalog follow that
+The owner selected the existing frozen Gap Sensitive Levels H1 TRAIN study as
+the first template. The first slice reads its stored results and supports an
+exact-template rerun in a separate workspace. Personal-data import and a downloadable dataset catalog follow that
 slice and remain requirements for the broader release.
 
 ## What exists and what is missing
@@ -21,8 +23,8 @@ slice and remain requirements for the broader release.
 | Background execution | Detached whole-run workers, heartbeat and terminal states | Setup checks and an end-to-end disconnect test on the supported platform |
 | Explorer | Real result readers, run overview, trade charts and timeframes | Start/configure it for the user's workspace and publish the completed run to its index |
 | Existing synthetic demo | Generated in-memory prices and trades for UI preview | It is not a research run and cannot stand in for the engine example |
-| MCP server | Absent | Local stdio server with explicit tool schemas and errors |
-| Codex plugin and Skills | Absent | Package, local marketplace entry, installation instructions, workflow Skills |
+| MCP server | Local stdio server with seven tools | Broader templates after the frozen Gaps workflow |
+| Codex plugin and Skills | Plugin, local marketplace, Gaps workflow Skill and installer | Public directory submission and more platforms remain separate work |
 | Personal data | Engine accepts admitted, manifest-backed datasets | Guided import, column/time interpretation, validation and admission |
 | Downloadable catalog | Absent | Approved packages, catalog metadata, integrity checks and download/install flow |
 
@@ -77,7 +79,8 @@ needs to be relaxed for this plan.
 
 ## Initial MCP tools
 
-These are proposed names, not commands available today.
+These tools are implemented for the exact frozen Gaps template. `research_study`
+also explains the configuration and locates its historical report.
 
 | Tool | Purpose | Effects |
 | --- | --- | --- |
@@ -88,8 +91,8 @@ These are proposed names, not commands available today.
 | `research_status` | Read recorded state, heartbeat and available progress | Read-only; no reconciliation |
 | `research_results` | Return bounded recorded results and an Explorer link | Read-only; no evaluation or index rebuild |
 
-For the first slice, `research_prepare` accepts only the bundled synthetic
-template and its documented bounded parameters. It returns the normalized plan,
+For the first slice, `research_prepare` accepts only the frozen Gaps template;
+there are no parameter overrides. It returns the normalized plan,
 dataset identity, code/lock identities and declared execution limits. Parsing a
 valid JSON configuration alone must not be reported as a full runtime preflight.
 `research_start` checks that the prepared inputs still match before launch.
@@ -131,7 +134,7 @@ distribution rights and intended access role have been checked. Storage hosting
 is a separate deployment decision; the first slice does not expose a research
 server or distribute internal datasets.
 
-The synthetic example gets its own explicit clock domain, deterministic
+The later synthetic example will get its own explicit clock domain, deterministic
 generator, split policy and manifests. Generation writes a new workspace artifact
 and never modifies existing datasets. Research access remains TRAIN-only for
 the first slice. OOS/LOCKBOX unlocks are not exposed as tools. Synthetic runs
@@ -142,12 +145,14 @@ synthetic provenance clearly labelled; no new cost-verification claim is made.
 
 | Step | Deliverable | Acceptance check |
 | --- | --- | --- |
-| 0 — this change | Source mapping and this specification | Links and command/interface evidence checked; no integration claimed |
-| 1 | Standalone synthetic engine example | Fresh checkout produces a COMPLETE run, real evaluations and TradeLogs; real Explorer opens it |
-| 2 | Local MCP adapter | Client discovers tools; prepare/start/status/results work; invalid and repeated requests are handled correctly; reads never mutate run files |
-| 3 | Codex plugin and Skills | Fresh Codex session loads the plugin and completes the example through tool calls |
-| 4 | Personal import and dataset catalog | Both paths create validated, identity-pinned datasets and run the supported template |
-| 5 | Public installation package | A new user completes setup through results using only the published instructions |
+| 0 | Source mapping and specification | Complete |
+| 1 | Existing Gaps results through MCP and Explorer | Implemented; recorded-file checks, unchanged source artifacts and real Codex tool invocation verified |
+| 2 | Exact frozen Gaps rerun | Implemented; immutable prepared inputs, detached engine CLI and durable retry guard |
+| 3 | Codex plugin and Skill | Installed and discovered in a fresh Codex app-server session; local MCP invocation verified without an LLM call |
+| 4 | Standalone synthetic engine example | Planned; UI preview alone is insufficient |
+| 5 | Personal import and dataset catalog | Planned; both must create validated, identity-pinned datasets |
+| 6 | Public installation polish | Requires a new-user walkthrough with distributable data |
+
 
 The underlying execution must survive closing the MCP client. Tampered dataset
 files and changed prepared inputs must be refused. Protected-data paths remain
@@ -156,11 +161,17 @@ and installation checks when their implementation exists.
 
 ## Current verification and external references
 
-This mapping inspected the actual engine, Explorer and synthetic test paths.
-On the development host, Codex CLI 0.163.0 exposes `mcp` and `plugin` commands;
-the engine's `run` and `status` command schemas were inspected without executing
-a research run. No plugin installation, MCP handshake, new dataset import or
-model-driven research has been performed for this planning step.
+The initial source mapping is followed by the Gaps implementation in
+`integrations/codex/`. Tests cover real stdio discovery/tool calls, protected
+and changed-template refusal, file corruption, read-only status/results,
+changed plans, duplicate requests, uncertain launches and active-run blocking.
+The installed plugin was also loaded through Codex CLI 0.163.0's app-server;
+its Skill, seven tools and actual historical-results invocation were verified.
+No model-generated interpretation is claimed by that protocol check.
+
+See [ADR-0030](adr/ADR-0030-codex-gaps-adapter.md) for the approved boundary.
+Public installation includes no private market data or run files. The original
+research repositories remain separate and unchanged.
 
 Implementation references, checked 2026-10-30:
 

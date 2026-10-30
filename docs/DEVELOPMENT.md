@@ -41,3 +41,17 @@ workflow-editing permission is available.
 The chart library retains its own license and attribution. The project has not
 yet selected a separate open-source license; publication alone is not a new
 license grant. See [third-party notices](THIRD_PARTY.md).
+
+## Codex adapter
+
+The adapter has its own locked environment in `integrations/codex/`:
+
+```bash
+uv sync --locked --project integrations/codex
+uv run --frozen --project integrations/codex pytest integrations/codex/tests
+uv run --frozen --project integrations/codex ruff check integrations/codex
+```
+
+Run these in addition to the engine gate and Explorer checks. Adapter fixtures
+are generated metadata; they contain no private market data. A live workspace
+check must use explicit configured roots and an allowed TRAIN study.
