@@ -17,7 +17,7 @@ no new research phase or protected-data access is authorized by publication.
 ## Codex integration
 
 The owner selected the existing frozen Gaps TRAIN study for the first Codex
-integration. The local MCP server, seven tools, Codex plugin, workflow Skill and
+integration. The local MCP server, original seven tools, Codex plugin, Gaps Skill and
 installer are implemented. See [Research with Codex](docs/CODEX.md), the
 [release plan](docs/CODEX_MVP.md) and
 [ADR-0030](docs/adr/ADR-0030-codex-gaps-adapter.md).
@@ -27,7 +27,19 @@ reruns use a separate workspace and the existing detached engine CLI. No tuning,
 sweeps or protected-data unlocks are exposed. The original source repositories,
 historical runs and immutable dataset roots are not modified by integration.
 
-NEXT: a standalone synthetic engine example for people without the private
-TRAIN dataset, then guided personal-data import and an approved downloadable
-catalog. The existing synthetic Explorer demo remains a UI preview only.
-Integration does not advance the historical research phases.
+The general `research-experiment` Skill is now implemented with four additional
+MCP tools: component/dataset metadata inventory, structured specification review,
+immutable specification freeze and revision retrieval. It guides interview,
+agreement, missing-component integration, testing and execution handoff.
+See [the workflow](docs/EXPERIMENT_WORKFLOW.md) and
+[ADR-0031](docs/adr/ADR-0031-experiment-authoring-workflow.md).
+
+This is not generic automatic execution: coding integration uses a capable host,
+and the automatic MCP launch tools still accept only the frozen Gaps template.
+No new user strategy or dataset was implemented/evaluated by adding the Skill.
+
+NEXT: validate one new user-described experiment through the complete workflow,
+then implement general prepared-run tooling and guided dataset admission. A
+standalone synthetic engine example and approved downloadable catalog remain
+release requirements. The existing synthetic Explorer demo is a UI preview only.
+This integration does not advance historical research phases.

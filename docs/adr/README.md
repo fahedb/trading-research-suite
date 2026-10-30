@@ -250,3 +250,5 @@ finding rather than rewriting the original decision text, so the reasoning
 trail stays visible in Git history and in the document itself.
 
 - [ADR-0029 — Combined public source distribution](ADR-0029-public-suite-distribution.md)
+- [ADR-0030 — Local Codex Gaps adapter](ADR-0030-codex-gaps-adapter.md)
+- [ADR-0031 — General experiment-authoring workflow](ADR-0031-experiment-authoring-workflow.md)

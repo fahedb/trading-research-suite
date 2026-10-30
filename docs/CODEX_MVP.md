@@ -3,6 +3,12 @@
 Status: the first Gaps integration is implemented. See [setup](CODEX.md).
 Personal import, catalog download and a standalone synthetic engine example remain planned.
 
+Version 0.2 adds the [general experiment-authoring workflow](EXPERIMENT_WORKFLOW.md):
+describe an idea, resolve missing semantics, freeze a revision, identify missing
+code/data and integrate through a coding-capable host. Four general MCP tools
+support inventory/review/freeze/retrieval. Generic automatic MCP launch is still
+unimplemented; the Gaps execution tools retain their exact-template boundary.
+
 ## The first working experience
 
 A user installs the suite, connects it to Codex CLI, and asks for a small research
@@ -23,8 +29,8 @@ slice and remain requirements for the broader release.
 | Background execution | Detached engine worker verified after MCP disconnect on Linux | More platforms and installation environments |
 | Explorer | Real result readers, run overview, trade charts and timeframes | Start/configure it for the user's workspace and publish the completed run to its index |
 | Existing synthetic demo | Generated in-memory prices and trades for UI preview | It is not a research run and cannot stand in for the engine example |
-| MCP server | Local stdio server with seven tools | Broader templates after the frozen Gaps workflow |
-| Codex plugin and Skills | Plugin, local marketplace, Gaps workflow Skill and installer | Public directory submission and more platforms remain separate work |
+| MCP server | Local stdio server with seven Gaps tools and four general authoring tools | General prepared-run execution |
+| Codex plugin and Skills | Plugin, local marketplace, Gaps and general experiment Skills, and installer | A complete new-experiment walkthrough, public directory submission and more platforms |
 | Personal data | Engine accepts admitted, manifest-backed datasets | Guided import, column/time interpretation, validation and admission |
 | Downloadable catalog | Absent | Approved packages, catalog metadata, integrity checks and download/install flow |
 
@@ -79,8 +85,23 @@ needs to be relaxed for this plan.
 
 ## Initial MCP tools
 
-These tools are implemented for the exact frozen Gaps template. `research_study`
-also explains the configuration and locates its historical report.
+General authoring tools added in version 0.2:
+
+| Tool | Purpose | Effects |
+| --- | --- | --- |
+| `experiment_inventory` | List public registry names and dataset administrative metadata | Read-only; no market rows |
+| `experiment_review` | Find structural omissions and record known integration gaps | Read-only; does not prove semantic correctness |
+| `experiment_freeze` | Bind the agreed specification to user-instruction evidence and a digest | Write an immutable revision outside the checkout; no run |
+| `experiment_get` | Restore a revision with identity/digest checks | Read-only |
+
+These support the general `research-experiment` Skill. Missing implementations
+can remain explicit tasks at freeze; unanswered research semantics cannot.
+Code authoring uses the host's own development tools and existing component
+contracts, not a generic shell MCP endpoint. See
+[ADR-0031](adr/ADR-0031-experiment-authoring-workflow.md).
+
+The following `research_*` workflow tools support the exact frozen Gaps template.
+`research_study` also explains the configuration and locates its historical report.
 
 | Tool | Purpose | Effects |
 | --- | --- | --- |
@@ -101,7 +122,8 @@ The launch sequence must prevent duplicate tool retries from silently starting
 additional attempts. Keep an atomic request-to-run record outside the checkout;
 an uncertain launch is reported as uncertain and checked before retrying.
 The engine's run directory remains authoritative. One active run is the initial
-default; wide sweeps and new strategy-code generation are later capabilities.
+default; wide sweeps are not exposed by the adapter. New component authoring uses
+the general Skill and the coding host, outside this bounded launch interface.
 
 Index refresh and starting the local Explorer are explicit workspace operations,
 outside read-only result tools. Return availability honestly if the viewer is
@@ -182,6 +204,7 @@ Implementation references, checked 2026-10-30:
 - [Local MCP configuration](https://learn.chatgpt.com/docs/extend/mcp).
 - [Plugin packaging and local distribution](https://developers.openai.com/plugins/build/plugins).
 - [Plugin installation](https://learn.chatgpt.com/docs/plugins).
+- [Skill packaging and supporting references](https://learn.chatgpt.com/docs/build-skills).
 
 Source anchors:
 

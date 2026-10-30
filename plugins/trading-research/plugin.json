@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "trading-research",
-  "version": "0.1.0",
-  "description": "Explore the Gaps study, read recorded results and run its frozen research template locally.",
+  "version": "0.2.0",
+  "description": "Describe and freeze research experiments, plan and implement missing components with Codex, and explore the existing Gaps study.",
   "author": {"name": "fahedb"},
   "repository": "https://github.com/fahedb/trading-research-suite",
   "extensions": {
@@ -13,7 +13,10 @@
         "developerName": "fahedb",
         "category": "Productivity",
         "capabilities": ["Read", "Write"],
-        "defaultPrompt": ["Show me the Gaps research and explain its recorded results."]
+        "defaultPrompt": [
+          "Help me turn my research idea into a precise experiment and identify what is missing.",
+          "Show me the Gaps research and explain its recorded results."
+        ]
       }
     }
   }

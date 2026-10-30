@@ -16,6 +16,13 @@ from trading_research_mcp.service import (
     Settings,
     atomic_json,
 )
+from trading_research_mcp.specification import (
+    Approval,
+    ExperimentSpec,
+    SpecificationStore,
+    inventory,
+    review_spec,
+)
 
 DEFAULT_CONFIG = Path.home() / ".config/trading-research-suite/codex.json"
 READ = ToolAnnotations(
@@ -32,7 +39,10 @@ START = ToolAnnotations(
 def create_server(config_path: Path) -> FastMCP:
     server = FastMCP(
         "Trading Research",
-        instructions="Use the frozen Gaps study. Reading results does not authorize a rerun. "
+        instructions="Use experiment_* tools to review and freeze general research specifications. "
+        "A frozen specification is not a runnable engine config. "
+        "research_study/datasets/prepare/start/status/results support only the frozen Gaps study. "
+        "Reading results or freezing a specification does not start a run. "
         "Use research_start only when the user requested execution. "
         "Preserve cost limitations and native wall-clock semantics.",
     )
@@ -76,6 +86,30 @@ def create_server(config_path: Path) -> FastMCP:
     def research_start(plan_id: str) -> dict[str, Any]:
         """Launch a prepared rerun when requested. Repeated plan IDs never launch twice."""
         return service().start(plan_id)
+
+    @server.tool(annotations=READ)
+    def experiment_inventory() -> dict[str, Any]:
+        """List available component names and dataset metadata; never read market rows."""
+        return inventory(service().settings)
+
+    @server.tool(annotations=READ)
+    def experiment_review(spec: ExperimentSpec) -> dict[str, Any]:
+        """Find missing specification fields and integration gaps. No writes or execution."""
+        return review_spec(spec)
+
+    @server.tool(annotations=START)
+    def experiment_freeze(spec: ExperimentSpec, approval: Approval) -> dict[str, Any]:
+        """Save an immutable experiment revision with digest-bound user instruction evidence.
+
+        This records assistant-reported authorization, not authentication. It never
+        launches a run, downloads data or establishes semantic/runtime correctness.
+        """
+        return SpecificationStore(service().settings).freeze(spec, approval)
+
+    @server.tool(annotations=READ)
+    def experiment_get(experiment_id: str, revision: int = 1) -> dict[str, Any]:
+        """Read and check an immutable experiment specification before resuming integration."""
+        return SpecificationStore(service().settings).get(experiment_id, revision)
 
     return server
 

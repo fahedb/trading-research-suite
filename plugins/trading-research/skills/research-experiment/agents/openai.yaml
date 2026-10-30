@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design a research experiment"
+  short_description: "Clarify, freeze and integrate a research idea"
+  default_prompt: "Use $research-experiment to turn my research idea into a precise experiment and identify what must be built."

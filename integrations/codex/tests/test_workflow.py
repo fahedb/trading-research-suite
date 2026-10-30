@@ -300,7 +300,19 @@ def test_real_stdio_handshake_results_and_invalid_id(study, tmp_path):
         async with stdio_client(params) as (read, write), ClientSession(read, write) as session:
             await session.initialize()
             tools = {t.name: t for t in (await session.list_tools()).tools}
-            assert len(tools) == 7
+            assert set(tools) == {
+                "research_capabilities",
+                "research_study",
+                "research_datasets",
+                "research_status",
+                "research_results",
+                "research_prepare",
+                "research_start",
+                "experiment_inventory",
+                "experiment_review",
+                "experiment_freeze",
+                "experiment_get",
+            }
             assert tools["research_results"].annotations.readOnlyHint
             assert not tools["research_start"].annotations.readOnlyHint
             result = await session.call_tool("research_results", {})

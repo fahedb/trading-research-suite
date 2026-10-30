@@ -15,6 +15,7 @@ entry, exit, and surrounding price action.
 - Compare runs and inspect where results differ.
 - Browse trades on a chart, including entries, exits, stops, and targets.
 - Add your own research methods as the project grows.
+- Describe a research idea to Codex and clarify it into a versioned experiment plan.
 
 ## Take a look
 

@@ -1,13 +1,17 @@
 # Research with Codex
 
-Connect Codex to the existing **Gap Sensitive Levels H1** study. Ask what it
-tests, read the results saved on your machine, or request a rerun of its frozen
-template. The Explorer gives you the visual view of those results.
+Describe a new research idea with the **Research Experiment** Skill, clarify its
+missing details and save an agreed specification before integrating components.
+Read [the experiment workflow](EXPERIMENT_WORKFLOW.md) for what happens next.
+
+The plugin also connects to the existing **Gap Sensitive Levels H1** study:
+read its saved results or request a rerun of its frozen template. The Explorer
+gives you the visual view of those results.
 
 Try: **“Show me the Gaps research and explain what its results actually tell us.”**
 
-This first release is for Linux and Codex CLI. It includes a local MCP server,
-a plugin and a workflow Skill. It needs no separate LLM API key. Your historical
+This release is for Linux and Codex CLI. It includes a local MCP server,
+a plugin and two workflow Skills. It needs no separate LLM API key. Your historical
 run files and datasets stay outside the repository; the tools send requested
 summaries to your Codex conversation, so your Codex account's data settings apply.
 
@@ -41,6 +45,10 @@ and downloading an approved dataset catalog are still planned.
 
 | Tool | What happens |
 | --- | --- |
+| `experiment_inventory` | Lists registered component names and dataset metadata without reading market rows |
+| `experiment_review` | Finds missing fields and integration tasks in a new experiment specification |
+| `experiment_freeze` | Saves the agreed specification as an immutable revision; does not launch anything |
+| `experiment_get` | Restores and checks a frozen specification before resuming work |
 | `research_capabilities` | Shows what is installed and whether the historical run is present |
 | `research_study` | Explains the frozen template and its assumptions |
 | `research_datasets` | Checks the exact required TRAIN identity using manifest metadata |
@@ -87,8 +95,11 @@ demonstrates the workflow; it does not establish an edge. Cost assumptions and
 execution prices remain unverified. The tools retain these limitations and
 report drawdown by individual fold. Market keys remain native wall-clock.
 
-Only the exact existing TRAIN template is supported. No parameter tuning,
-sweeps or protected-data unlocks are exposed. New runs record the public
+General experiment planning/freezing is supported. Automatic MCP execution
+supports only the exact existing TRAIN template. General component integration
+uses Codex's coding tools and the suite's authoring contracts; CSV admission and
+catalog downloads remain unimplemented. No sweeps or protected-data unlocks are
+exposed. New runs record the public
 checkout's commit, so their identities differ from the original research run.
 Keep this checkout clean; data and generated files belong in the workspace.
 

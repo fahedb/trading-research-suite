@@ -172,7 +172,15 @@ class ResearchService:
             "historical_run_available": (
                 self.settings.source_runs_root / "runs" / HISTORICAL_RUN / "manifest.json"
             ).is_file(),
-            "scope": "Exact frozen TRAIN template only; no tuning, sweeps or unlocks",
+            "scope": "General experiment authoring; MCP execution supports only frozen Gaps TRAIN",
+            "authoring": {
+                "general_specification_review": True,
+                "immutable_specification_freeze": True,
+                "component_and_dataset_inventory": True,
+                "skill": "research-experiment",
+                "integration_requires": "Coding-capable host, suite checkout and permitted data",
+                "generic_mcp_launch": False,
+            },
             "data_included": False,
             "personal_import": False,
             "dataset_catalog": False,

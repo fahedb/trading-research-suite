@@ -9,6 +9,7 @@ your own research files.
 | Set up the engine and Explorer | [Getting started](GETTING_STARTED.md) |
 | Work on the code | [Development](DEVELOPMENT.md) |
 | Connect Codex to the Gaps study | [Research with Codex](CODEX.md) |
+| Turn a new research idea into a precise experiment | [Experiment workflow](EXPERIMENT_WORKFLOW.md) |
 | See the planned Codex integration and remaining work | [Codex first-release plan](CODEX_MVP.md) |
 | Understand the research engine | [Engine reference](ENGINE.md) |
 | Understand the research safeguards | [Research policy](research/RESEARCH_POLICY.md) |
