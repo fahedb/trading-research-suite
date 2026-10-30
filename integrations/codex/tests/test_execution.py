@@ -318,3 +318,29 @@ def test_data_dependency_cannot_be_silently_skipped(example):
     request["experiment_id"] = spec.experiment_id
     request["bindings"]["bid-source"] = ["/dataset"]
     assert "Data dependency" in str(service.check(**request)["blockers"])
+
+
+@pytest.mark.parametrize("state", ["COMPLETE", "RUNNING", "uncertain"])
+def test_known_launch_blockers_are_reported_before_preparation(example, monkeypatch, state):
+    service, request, _root = example
+    receipt = {
+        "workflow": "experiment",
+        "experiment_id": request["experiment_id"],
+        "revision": 1,
+        "run_id": RUN,
+        "launch_state": "uncertain" if state == "uncertain" else "launched",
+    }
+    atomic_json(service._mkdir("launches") / ("f" * 32 + ".json"), receipt)
+    atomic_json(
+        service._mkdir("engine/runs/" + RUN) / "state.json",
+        {"schema": "research-run-state-v2", "run_id": RUN, "state": state},
+    )
+
+    def no_engine(*_args, **_kwargs):
+        pytest.fail("known launch blocker should not spend an input-check budget")
+
+    monkeypatch.setattr(service, "_engine", no_engine)
+    result = service.prepare(**request)
+    assert not result["ready_to_run"]
+    assert "plan_id" not in result
+    assert any(word in str(result["blockers"]) for word in ("exhausted", "active", "uncertain"))

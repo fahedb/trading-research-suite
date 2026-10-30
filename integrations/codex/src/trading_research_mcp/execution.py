@@ -330,6 +330,23 @@ class ExperimentService:
         """Read permitted observations and calculate ephemeral features; no research run."""
         frozen = self.specs.get(experiment_id, revision)
         try:
+            launches = self.settings.workspace / "launches"
+            if launches.resolve() != launches.absolute():
+                raise Refused("Launch records must not follow symlinks")
+            attempts = 0
+            if launches.exists():
+                for path in launches.glob("*.json"):
+                    receipt = read_json(launches, path.name)
+                    if receipt.get("launch_state") != "launched":
+                        raise Refused("An uncertain launch needs inspection before preparation")
+                    if recorded_state(self.settings, receipt["run_id"])["state"] not in TERMINAL:
+                        raise Refused("An adapter-launched run is still active")
+                    attempts += (
+                        receipt.get("experiment_id") == experiment_id
+                        and receipt.get("revision") == revision
+                    )
+            if attempts >= frozen["specification"]["evaluation"]["max_runs"]:
+                raise Refused("The frozen experiment's run budget is exhausted")
             limits = frozen["approval"].get("limits")
             if limits is None:
                 raise Refused("Freeze an approved revision with structured execution limits first")
