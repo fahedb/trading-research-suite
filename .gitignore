@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+dist/
+build/
+*.egg-info/
+
+# Environment
+.env
+.direnv/
+
+# Machine-local Claude config (committed template: CLAUDE.local.md.example)
+CLAUDE.local.md
+
+# Editor / OS temporaries
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local run/cache/temp material, should any ever appear under the repo
+# (canonical locations are outside the repo — see CLAUDE.local.md)
+runs/
+cache/
+tmp/
+
+# Private configuration and generated data (all components)
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+.aws/
+.ssh/
+*.parquet
+*.npz
+*.sqlite*
+*.db
+*.jsonl
+explorer/fixture/*.json
+/data/
+/views/
+/explorer/data/
+/explorer/views/
+screenshots/

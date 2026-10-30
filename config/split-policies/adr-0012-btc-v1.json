@@ -1,0 +1,30 @@
+{
+  "schema_version": "1",
+  "adr": "ADR-0012",
+  "policy_version": "btc-v1",
+  "clock_domain": "mt5.justmarkets-demo.wallclock",
+  "time_unit": "seconds",
+  "calendar_time_policy": "native-wallclock-v1",
+  "ranges": {
+    "train": {
+      "start_inclusive_key": 1577836800,
+      "end_inclusive_key": 1704067140
+    },
+    "validation": {
+      "start_inclusive_key": 1704067200,
+      "end_inclusive_key": 1735689540
+    },
+    "oos": {
+      "start_inclusive_key": 1735689600,
+      "end_inclusive_key": 1767225540
+    },
+    "lockbox": {
+      "start_inclusive_key": 1767225600,
+      "end_inclusive_key": 1785542340
+    }
+  },
+  "provenance": {
+    "normative_source": "docs/adr/ADR-0012-two-tier-splits.md#amendment-4--clock-domain-specific-policy-projections-2026-09-09",
+    "ratified_on": "2026-09-09"
+  }
+}

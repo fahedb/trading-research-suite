@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Trade Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="run-head">
+  <button id="back" type="button" aria-label="Back to experiments">‹</button>
+  <span class="rid" id="h-rid">—</span>
+  <span class="meta" id="h-meta"></span>
+</div>
+
+<div id="trade-bar" aria-label="Selected trade">
+  <span class="dir" id="t-dir">—</span>
+  <span class="field"><span class="k">entry</span><span class="v" id="t-entry">—</span></span>
+  <span class="field"><span class="k">exit</span><span class="v" id="t-exit">—</span></span>
+  <span class="field"><span class="k">reason</span><span class="v" id="t-reason">—</span></span>
+  <span class="field"><span class="k">tp</span><span class="v" id="t-tp">—</span></span>
+  <span class="field"><span class="k">sl</span><span class="v" id="t-sl">—</span></span>
+  <span class="field"><span class="k">net</span><span class="v" id="t-pnl">—</span></span>
+  <span class="badge" id="t-cost">unverified</span>
+</div>
+
+<div id="chart" role="img" aria-label="Candlestick chart of the selected trade"></div>
+
+<div id="clock">
+  <span class="domain" id="c-domain">—</span>
+  <span class="readout" id="c-readout">loading…</span>
+</div>
+
+<details id="context">
+  <summary><span id="ctx-head">Trade context</span><span class="hint">why this trade</span></summary>
+  <div class="ctx" id="ctx-body"></div>
+</details>
+
+<details id="details">
+  <summary><span id="counter">Trade — / —</span><span class="hint">details</span></summary>
+  <div class="grid" id="detail-grid"></div>
+</details>
+
+<div id="timeframes" role="group" aria-label="Timeframe"></div>
+
+<div id="controls">
+  <button id="prev" type="button" aria-label="Previous trade">◀ Prev</button>
+  <button id="recenter" class="primary" type="button">Recenter</button>
+  <button id="next" type="button" aria-label="Next trade">Next ▶</button>
+</div>
+
+<script src="vendor/lightweight-charts.standalone.production.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

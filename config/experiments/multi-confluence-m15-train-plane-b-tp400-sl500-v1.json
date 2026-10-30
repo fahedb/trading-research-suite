@@ -1,0 +1,107 @@
+{
+  "schema": "research-experiment-config-v1",
+  "integrity_mode": "full",
+  "dataset": {
+    "dataset_id": "XAUUSD_S_M1_TRAIN_V1",
+    "manifest_sha256": "30ca7b4dbec4c7565d6bba312ae5c7d79fe9d7645ecd3c6868df89e62dff374e",
+    "role": "train"
+  },
+  "split_policy": {
+    "adr": "ADR-0012",
+    "policy_version": "v1",
+    "policy_sha256": "b7e0f582149509b26e53bcaefc8e4c3e36cadf2e7f558984fadb79bbe73405eb"
+  },
+  "bounds": {
+    "context_start": 1577926800,
+    "eval_start": 1635374280,
+    "eval_end": 1703894160
+  },
+  "features": [
+    {
+      "name": "multi_confluence_m15_v1",
+      "version": 1,
+      "params": {
+        "atr_length": 14,
+        "base_grid_seconds": 900,
+        "base_phase_offset_seconds": 0,
+        "ema_fast_length": 50,
+        "ema_slow_length": 200,
+        "ema_window": 2000,
+        "level_atr_range": {"__float_hex__": "0x1.3333333333333p-1"},
+        "level_grid_seconds": [14400, 21600, 28800, 43200, 604800],
+        "level_phase_offset_seconds": [0, 0, 0, 0, 345600],
+        "liquidity_lookback": 20,
+        "max_level_age_bars": 52,
+        "max_trend_age_bars": 512,
+        "minimum_score": 4,
+        "pivot_left": 5,
+        "pivot_right": 5,
+        "rma_window": 300,
+        "rsi_length": 14,
+        "rsi_long_level": 45,
+        "rsi_short_level": 55,
+        "trend_atr_range": {"__float_hex__": "0x1.0000000000000p-1"}
+      }
+    }
+  ],
+  "representation": null,
+  "model": {
+    "name": "multi_confluence_gate_v1",
+    "version": 1,
+    "params": {}
+  },
+  "training_outcome": null,
+  "evaluation_outcomes": [],
+  "policies": [
+    {
+      "name": "threshold_v1",
+      "version": 1,
+      "params": {
+        "output_column": "score",
+        "threshold": {"__float_hex__": "0x0.0p+0"}
+      }
+    }
+  ],
+  "evaluators": [],
+  "execution": {
+    "execution_id": "bracket_non_interruptible_v1",
+    "version": 1,
+    "lot_size": {"__float_hex__": "0x1.47ae147ae147bp-7"},
+    "take_profit_pips": {"__float_hex__": "0x1.9000000000000p+8"},
+    "stop_loss_pips": {"__float_hex__": "0x1.f400000000000p+8"},
+    "cost_binding": {
+      "binding_id": "unverified-audit-input-v1",
+      "binding_digest": null,
+      "cost_semantics": "unverified",
+      "execution_price_model": "recorded_path_unverified",
+      "contract_size": {"__float_hex__": "0x1.9000000000000p+6"},
+      "price_units_per_pip": {"__float_hex__": "0x1.47ae147ae147bp-7"},
+      "account_currency_per_quote_currency": {"__float_hex__": "0x1.0000000000000p+0"},
+      "spread_pips": {"__float_hex__": "0x1.4000000000000p+4"},
+      "commission_per_lot": {"__float_hex__": "0x1.8000000000000p+2"},
+      "commission_basis": "per_round_turn"
+    }
+  },
+  "trade_evaluators": [
+    {
+      "name": "trade_summary_v1",
+      "version": 1,
+      "params": {"min_effective_trades": 1}
+    },
+    {
+      "name": "equity_drawdown_v1",
+      "version": 1,
+      "params": {"min_effective_rows": 1}
+    }
+  ],
+  "folds": {
+    "fit_rows": 3,
+    "eval_rows": 153883,
+    "step_rows": 153883,
+    "embargo_rows": 0,
+    "purge_override": null
+  },
+  "seed": null,
+  "access_reason": null,
+  "declared_lockbox_evaluation": false
+}

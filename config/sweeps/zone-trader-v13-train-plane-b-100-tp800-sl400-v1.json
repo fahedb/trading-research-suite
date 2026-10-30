@@ -1,0 +1,3051 @@
+{
+  "schema": "research-sweep-request-v1",
+  "sweep_id": "zone-trader-v13-train-plane-b-100-tp800-sl400-v1",
+  "base_config": {
+    "schema": "research-experiment-config-v1",
+    "integrity_mode": "full",
+    "dataset": {
+      "dataset_id": "XAUUSD_S_M1_TRAIN_V1",
+      "manifest_sha256": "30ca7b4dbec4c7565d6bba312ae5c7d79fe9d7645ecd3c6868df89e62dff374e",
+      "role": "train"
+    },
+    "split_policy": {
+      "adr": "ADR-0012",
+      "policy_version": "v1",
+      "policy_sha256": "b7e0f582149509b26e53bcaefc8e4c3e36cadf2e7f558984fadb79bbe73405eb"
+    },
+    "bounds": {
+      "context_start": 1577926800,
+      "eval_start": 1580437860,
+      "eval_end": 1703894160
+    },
+    "features": [
+      {
+        "name": "zone_trader_v13",
+        "version": 1,
+        "params": {
+          "anchor_grid_seconds": 3600,
+          "anchor_phase_offset_seconds": 0,
+          "bar_grid_seconds": 300,
+          "bar_phase_offset_seconds": 0,
+          "break_buffer_atr": {
+            "__float_hex__": "0x1.0000000000000p-1"
+          },
+          "confirmation_mode": "rejection_wick",
+          "max_bars_wait": 6,
+          "max_base_atr": {
+            "__float_hex__": "0x1.999999999999ap-1"
+          },
+          "max_base_body": {
+            "__float_hex__": "0x1.0000000000000p-1"
+          },
+          "max_zone_age_rows": 5000,
+          "max_zones": 15,
+          "min_fvg_atr": {
+            "__float_hex__": "0x1.0000000000000p-2"
+          },
+          "min_move_atr": {
+            "__float_hex__": "0x1.3333333333333p+0"
+          },
+          "minimum_wick": {
+            "__float_hex__": "0x1.6666666666666p-2"
+          },
+          "reward_risk_target": {
+            "__float_hex__": "0x1.0000000000000p+1"
+          },
+          "stop_buffer_atr": {
+            "__float_hex__": "0x1.0000000000000p-1"
+          },
+          "use_demand_supply": true,
+          "use_imbalance": true,
+          "use_volume_zones": true,
+          "vol_len": 20,
+          "vol_mult": {
+            "__float_hex__": "0x1.0000000000000p+1"
+          },
+          "w_atr": 300
+        }
+      }
+    ],
+    "representation": null,
+    "model": {
+      "name": "zone_event_gate_v1",
+      "version": 1,
+      "params": {}
+    },
+    "training_outcome": null,
+    "evaluation_outcomes": [
+      {
+        "name": "forward_log_return_v1",
+        "version": 1,
+        "params": {
+          "boundary_policy": "nan",
+          "decision_delay_rows": 1,
+          "horizon_rows": 100,
+          "reference_price_column": "close"
+        }
+      }
+    ],
+    "policies": [
+      {
+        "name": "event_exposure_v1",
+        "version": 1,
+        "params": {}
+      }
+    ],
+    "evaluators": [
+      {
+        "name": "sign_accuracy_v1",
+        "version": 1,
+        "params": {
+          "min_effective_samples": 1,
+          "outcome_column": "target.forward_log_return",
+          "output_column": "score"
+        }
+      },
+      {
+        "name": "rank_ic_v1",
+        "version": 1,
+        "params": {
+          "min_effective_samples": 2,
+          "outcome_column": "target.forward_log_return",
+          "output_column": "score"
+        }
+      }
+    ],
+    "execution": {
+      "execution_id": "bracket_single_position_v1",
+      "version": 1,
+      "lot_size": {
+        "__float_hex__": "0x1.47ae147ae147bp-7"
+      },
+      "take_profit_pips": {
+        "__float_hex__": "0x1.9000000000000p+9"
+      },
+      "stop_loss_pips": {
+        "__float_hex__": "0x1.9000000000000p+8"
+      },
+      "cost_binding": {
+        "binding_id": "unverified-audit-input-v1",
+        "binding_digest": null,
+        "cost_semantics": "unverified",
+        "execution_price_model": "recorded_path_unverified",
+        "contract_size": {
+          "__float_hex__": "0x1.9000000000000p+6"
+        },
+        "price_units_per_pip": {
+          "__float_hex__": "0x1.47ae147ae147bp-7"
+        },
+        "account_currency_per_quote_currency": {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        "spread_pips": {
+          "__float_hex__": "0x1.4000000000000p+4"
+        },
+        "commission_per_lot": {
+          "__float_hex__": "0x1.8000000000000p+2"
+        },
+        "commission_basis": "per_round_turn"
+      }
+    },
+    "trade_evaluators": [
+      {
+        "name": "trade_summary_v1",
+        "version": 1,
+        "params": {
+          "min_effective_trades": 1
+        }
+      },
+      {
+        "name": "equity_drawdown_v1",
+        "version": 1,
+        "params": {
+          "min_effective_rows": 1
+        }
+      }
+    ],
+    "folds": {
+      "fit_rows": 385824,
+      "eval_rows": 200000,
+      "step_rows": 200000,
+      "embargo_rows": 0,
+      "purge_override": null
+    },
+    "seed": null,
+    "access_reason": null,
+    "declared_lockbox_evaluation": false
+  },
+  "axes": [
+    {
+      "json_pointer": "/features/0/params/use_volume_zones",
+      "values": [
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        false,
+        false,
+        true,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/use_imbalance",
+      "values": [
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        false,
+        true,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/use_demand_supply",
+      "values": [
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        false,
+        false,
+        true,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/min_fvg_atr",
+      "values": [
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-4"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-4"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-4"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/max_base_body",
+      "values": [
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/max_base_atr",
+      "values": [
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.4cccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.4cccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.4cccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.4cccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.4cccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.199999999999ap+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/min_move_atr",
+      "values": [
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.ccccccccccccdp+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-1"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/vol_len",
+      "values": [
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        15,
+        20,
+        20,
+        15,
+        15,
+        20,
+        15,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        15,
+        30,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        5,
+        20,
+        60,
+        15,
+        40,
+        10,
+        30,
+        5,
+        20,
+        60,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        60,
+        15,
+        40,
+        10,
+        30,
+        5,
+        20,
+        60,
+        15,
+        40,
+        30,
+        5,
+        20,
+        60,
+        15,
+        40,
+        10,
+        30,
+        5,
+        20,
+        60,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/vol_mult",
+      "values": [
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.2000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.2000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.2000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.c000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.4000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.2000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+1"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/confirmation_mode",
+      "values": [
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "immediate_touch",
+        "immediate_touch",
+        "immediate_touch",
+        "immediate_touch",
+        "immediate_touch",
+        "immediate_touch",
+        "immediate_touch",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "immediate_touch",
+        "close_back_outside",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "rejection_wick",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside",
+        "immediate_touch",
+        "rejection_wick",
+        "close_back_outside"
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/minimum_wick",
+      "values": [
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-4"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-4"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-3"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.3333333333333p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.999999999999ap-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.6666666666666p-2"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/max_bars_wait",
+      "values": [
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        6,
+        3,
+        8,
+        6,
+        6,
+        6,
+        6,
+        1,
+        8,
+        3,
+        12,
+        6,
+        2,
+        10,
+        4,
+        1,
+        8,
+        2,
+        10,
+        4,
+        1,
+        8,
+        3,
+        12,
+        6,
+        2,
+        10,
+        3,
+        12,
+        6,
+        2,
+        10,
+        4,
+        1,
+        8,
+        3,
+        12,
+        6,
+        2,
+        4,
+        1,
+        8,
+        3,
+        12,
+        6,
+        2,
+        10,
+        4,
+        1,
+        8,
+        6,
+        2,
+        10,
+        4,
+        1,
+        8,
+        3,
+        12,
+        6,
+        2,
+        10,
+        8,
+        3,
+        12,
+        6,
+        2,
+        10,
+        4,
+        1,
+        8,
+        3
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/break_buffer_atr",
+      "values": [
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        },
+        {
+          "__float_hex__": "0x0.0p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p+0"
+        },
+        {
+          "__float_hex__": "0x1.8000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-1"
+        },
+        {
+          "__float_hex__": "0x1.0000000000000p-2"
+        }
+      ]
+    },
+    {
+      "json_pointer": "/features/0/params/max_zones",
+      "values": [
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        20,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        15,
+        10,
+        20,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5,
+        10,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        30,
+        20,
+        30,
+        50,
+        5,
+        10,
+        15,
+        20,
+        30,
+        50,
+        5
+      ]
+    }
+  ],
+  "combination": "zip"
+}

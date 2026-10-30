@@ -1,0 +1,151 @@
+{
+  "schema": "research-experiment-config-v1",
+  "integrity_mode": "full",
+  "dataset": {
+    "dataset_id": "XAUUSD_S_M1_TRAIN_V1",
+    "manifest_sha256": "30ca7b4dbec4c7565d6bba312ae5c7d79fe9d7645ecd3c6868df89e62dff374e",
+    "role": "train"
+  },
+  "split_policy": {
+    "adr": "ADR-0012",
+    "policy_version": "v1",
+    "policy_sha256": "b7e0f582149509b26e53bcaefc8e4c3e36cadf2e7f558984fadb79bbe73405eb"
+  },
+  "bounds": {
+    "context_start": 1577926800,
+    "eval_start": 1580437860,
+    "eval_end": 1703894160
+  },
+  "features": [
+    {
+      "name": "uls_push_v7",
+      "version": 1,
+      "params": {
+        "atr_len": 14,
+        "atr_window": 300,
+        "bar_grid_seconds": 300,
+        "bar_phase_offset_seconds": 0,
+        "cancel_opposite": true,
+        "cisd_max_age": 800,
+        "confirmation_mode": "trendline_or_bos",
+        "confirmation_wait": 12,
+        "displacement_atr": {"__float_hex__": "0x1.0000000000000p-1"},
+        "ema_filter": "off",
+        "ema_len": 200,
+        "ema_window": 2000,
+        "engine_mode": "merged",
+        "equal_tolerance_atr": {"__float_hex__": "0x1.999999999999ap-4"},
+        "fvg_age": 300,
+        "hour_baseline": false,
+        "ifvg_search": 6,
+        "inversion_mode": "close",
+        "key_level_atr_multiple": {"__float_hex__": "0x1.8000000000000p+0"},
+        "key_level_manual_step": {"__float_hex__": "0x1.4000000000000p+3"},
+        "key_level_mode": "auto",
+        "key_level_tolerance_atr": {"__float_hex__": "0x1.0000000000000p-2"},
+        "liquidity_age": 800,
+        "liquidity_mode": "both",
+        "max_ifvg_atr": {"__float_hex__": "0x1.0000000000000p+0"},
+        "max_ifvg_distance_atr": {"__float_hex__": "0x1.0000000000000p+1"},
+        "max_levels": 20,
+        "max_push_zones": 6,
+        "max_retracement_pct": {"__float_hex__": "0x1.6800000000000p+6"},
+        "max_sweep_atr": {"__float_hex__": "0x1.8000000000000p-1"},
+        "min_equal_touches": 2,
+        "min_ifvg_atr": {"__float_hex__": "0x1.999999999999ap-5"},
+        "min_retracement_pct": {"__float_hex__": "0x1.9000000000000p+4"},
+        "min_score": 60,
+        "min_sweep_atr": {"__float_hex__": "0x1.999999999999ap-4"},
+        "min_trendline_touches": 2,
+        "min_volatility_rank": 0,
+        "minimum_tick": {"__float_hex__": "0x1.47ae147ae147bp-7"},
+        "momentum_len": 50,
+        "momentum_slope": 5,
+        "momentum_window": 500,
+        "pivot_len": 5,
+        "push_atr": {"__float_hex__": "0x1.8000000000000p+0"},
+        "push_bars": 6,
+        "push_volume_multiple": {"__float_hex__": "0x1.8000000000000p+0"},
+        "push_zone_age": 200,
+        "rejection_ratio": {"__float_hex__": "0x1.ccccccccccccdp-2"},
+        "require_key_level": false,
+        "require_rejection": true,
+        "return_bars": 3,
+        "session_filter": false,
+        "sweep_confirmation": "close",
+        "total_setup_bars": 40,
+        "trendline_break_mode": "close",
+        "trendline_tolerance_atr": {"__float_hex__": "0x1.999999999999ap-4"},
+        "use_displacement_filter": false,
+        "use_ifvg_size": false,
+        "use_key_levels": true,
+        "use_momentum": false,
+        "use_score_filter": false,
+        "use_volume_filter": false,
+        "volume_multiple": {"__float_hex__": "0x1.3333333333333p+0"},
+        "zone_uses_wicks": true
+      }
+    }
+  ],
+  "representation": null,
+  "model": {
+    "name": "uls_push_gate_v1",
+    "version": 1,
+    "params": {}
+  },
+  "training_outcome": null,
+  "evaluation_outcomes": [
+    {
+      "name": "forward_log_return_v1",
+      "version": 1,
+      "params": {
+        "boundary_policy": "nan",
+        "decision_delay_rows": 1,
+        "horizon_rows": 100,
+        "reference_price_column": "close"
+      }
+    }
+  ],
+  "policies": [
+    {
+      "name": "threshold_v1",
+      "version": 1,
+      "params": {
+        "output_column": "score",
+        "threshold": {"__float_hex__": "0x0.0p+0"}
+      }
+    }
+  ],
+  "evaluators": [
+    {
+      "name": "sign_accuracy_v1",
+      "version": 1,
+      "params": {
+        "min_effective_samples": 1,
+        "outcome_column": "target.forward_log_return",
+        "output_column": "score"
+      }
+    },
+    {
+      "name": "rank_ic_v1",
+      "version": 1,
+      "params": {
+        "min_effective_samples": 2,
+        "outcome_column": "target.forward_log_return",
+        "output_column": "score"
+      }
+    }
+  ],
+  "execution": null,
+  "trade_evaluators": [],
+  "folds": {
+    "fit_rows": 385824,
+    "eval_rows": 200000,
+    "step_rows": 200000,
+    "embargo_rows": 0,
+    "purge_override": null
+  },
+  "seed": null,
+  "access_reason": null,
+  "declared_lockbox_evaluation": false
+}

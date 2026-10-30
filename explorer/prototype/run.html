@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Run Overview — Trade Explorer</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body class="page">
+
+<div class="page-head">
+  <div class="head-row">
+    <button id="back" type="button" aria-label="Back to experiments">‹</button>
+    <h1 id="r-title">Run Overview</h1>
+  </div>
+  <div class="sub" id="r-sub">loading…</div>
+</div>
+
+<div id="r-scroll" class="scroll-list">
+
+  <div id="hero">
+    <div class="hero-pnl">
+      <span id="h-pnl">—</span>
+      <span class="badge" id="h-cost">unverified</span>
+    </div>
+    <div class="hero-facts" id="h-facts"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <span>Cumulative net PnL</span>
+      <span class="panel-hint" id="curve-hint">tap a point to open that trade</span>
+    </div>
+    <div id="pnl-chart"></div>
+    <div class="panel-note" id="curve-note"></div>
+  </div>
+
+  <div class="cta">
+    <button id="explore" class="primary" type="button">Explore trades</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><span>Breakdown</span><span class="panel-hint">recorded trade fields</span></div>
+    <div class="kv" id="breakdown"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><span>Per fold</span><span class="panel-hint">recorded metrics</span></div>
+    <div class="table-wrap">
+      <table id="fold-table">
+        <thead><tr>
+          <th class="align-left">Fold</th>
+          <th class="align-right">Trades</th>
+          <th class="align-right">Net PnL</th>
+          <th class="align-right">Win rate</th>
+          <th class="align-right">Max DD</th>
+        </tr></thead>
+        <tbody id="fold-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="note" id="r-note"></div>
+</div>
+
+<script src="vendor/lightweight-charts.standalone.production.js"></script>
+<script src="run.js"></script>
+</body>
+</html>

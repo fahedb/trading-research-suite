@@ -1,0 +1,682 @@
+/* Trade Explorer E1 prototype — restrained instrument theme.
+   The chart owns the screen; chrome stays quiet and thumb-reachable. */
+
+:root {
+  --ground:   #0E1520;  /* deep blue-slate instrument housing, not black */
+  --panel:    #16202E;  /* raised surfaces */
+  --hairline: #24334A;  /* dividers */
+  --ink:      #DCE6F2;  /* primary text */
+  --ink-dim:  #7B8CA5;  /* labels, units, metadata */
+  --long:     #35C08A;  /* up candles / take-profit */
+  --short:    #E5544B;  /* down candles / stop-loss */
+  --signal:   #F2A93B;  /* reserved: the selected trade, and nothing else */
+
+  --mono: ui-monospace, "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --ui: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --tap: 44px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overscroll-behavior: none;      /* no pull-to-refresh stealing a pan */
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--ui);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ---------------------------------------------------------- trade context */
+
+#trade-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+#trade-bar::-webkit-scrollbar { display: none; }
+
+.dir {
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 3px;
+  letter-spacing: .04em;
+}
+.dir.long  { color: var(--long);  background: color-mix(in srgb, var(--long) 14%, transparent); }
+.dir.short { color: var(--short); background: color-mix(in srgb, var(--short) 14%, transparent); }
+
+.field { display: flex; gap: 5px; align-items: baseline; }
+.field .k { color: var(--ink-dim); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; }
+.field .v { color: var(--ink); }
+.v.neg { color: var(--short); }
+.v.pos { color: var(--long); }
+
+.badge {
+  font-size: 9px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--signal);
+  border: 1px solid color-mix(in srgb, var(--signal) 45%, transparent);
+  border-radius: 3px;
+  padding: 2px 5px;
+}
+
+/* ------------------------------------------------------------------ chart */
+
+#chart {
+  flex: 1 1 auto;
+  min-height: 0;               /* lets the chart actually shrink in flex */
+  touch-action: none;          /* the chart owns every gesture inside it */
+  position: relative;
+}
+
+/* ----------------------------------------------------- clock-domain strip */
+
+#clock {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 12px;
+  background: var(--panel);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 10.5px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+#clock .domain { overflow: hidden; text-overflow: ellipsis; }
+#clock .readout { color: var(--ink); flex: 0 0 auto; }
+
+/* --------------------------------------------------------------- controls */
+
+#controls {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+  background: var(--panel);
+  border-top: 1px solid var(--hairline);
+}
+
+button {
+  flex: 1;
+  min-height: var(--tap);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--ui);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: .01em;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+button:active { background: var(--hairline); }
+button:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+button.primary {
+  color: var(--ground);
+  background: var(--signal);
+  border-color: var(--signal);
+}
+button.primary:active { background: color-mix(in srgb, var(--signal) 82%, black); }
+
+
+/* ------------------------------------------------------------- run selector */
+
+#run-bar {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--hairline);
+}
+
+#run-select {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 0 10px;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  -webkit-tap-highlight-color: transparent;
+}
+#run-select:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* ------------------------------------------------------ trade details drawer */
+
+#details {
+  flex: 0 0 auto;
+  background: var(--panel);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+#details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+  padding: 6px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+#details > summary::-webkit-details-marker { display: none; }
+#details > summary .hint {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+#details[open] > summary .hint::after { content: " ▾"; }
+#details:not([open]) > summary .hint::after { content: " ▸"; }
+
+#details .grid {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 3px 12px;
+  padding: 2px 12px 10px;
+  font-size: 11px;
+  max-height: 34dvh;
+  overflow-y: auto;
+}
+#details .grid .dk { color: var(--ink-dim); white-space: nowrap; }
+#details .grid .dv { color: var(--ink); word-break: break-all; }
+
+/* controls: three equal thumb targets */
+#controls button { flex: 1; }
+
+/* --------------------------------------------------------------- desktop */
+
+@media (min-width: 720px) {
+  #trade-bar { font-size: 13px; padding: 10px 16px; }
+  #controls  { justify-content: center; }
+  button     { flex: 0 1 200px; }
+  #run-select { font-size: 13px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
+
+/* ═══════════════════════════════ shared list-page layout (plugins, family) */
+
+body.page { display: flex; flex-direction: column; height: 100dvh; }
+
+.page-head {
+  flex: 0 0 auto;
+  padding: 10px 12px 6px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--hairline);
+}
+.page-head h1 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: .01em;
+  color: var(--ink);
+}
+.page-head .head-row { display: flex; align-items: center; gap: 10px; }
+.page-head .head-row h1 { flex: 1; min-width: 0; }
+.page-head .sub {
+  margin-top: 2px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  color: var(--ink-dim);
+}
+
+.scroll-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+}
+
+.note {
+  padding: 12px;
+  font-family: var(--mono);
+  font-size: 10px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--hairline);
+}
+
+/* ------------------------------------------------ plugin family selection */
+
+.family-row {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  border: 0;
+  border-bottom: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+.family-row:active { background: var(--panel); }
+.family-row:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+
+.family-row .r1 {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+.family-row .r1 .rid { font-size: 14px; font-weight: 650; color: var(--ink); }
+.family-row .r1 > span:last-child { font-size: 12px; color: var(--ink-dim); }
+
+.family-row .r2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 14px;
+  font-size: 12px;
+}
+.family-row .m { display: flex; gap: 4px; align-items: baseline; }
+.family-row .m .lbl {
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.family-row .pnl { font-weight: 650; }
+.family-row .pnl.pos { color: var(--long); }
+.family-row .pnl.neg { color: var(--short); }
+
+/* ---------------------------------------------------- experiments: the table */
+
+#table-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;                     /* both axes: wide table, tall list */
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+#f-table {
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  white-space: nowrap;                /* never wrap a cell into extra rows */
+}
+
+#f-table th, #f-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.align-left  { text-align: left; }
+.align-right { text-align: right; }
+
+#f-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--panel);
+  color: var(--ink-dim);
+  font-size: 10.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 650;
+  border-bottom: 1px solid var(--hairline);
+  -webkit-tap-highlight-color: transparent;
+}
+#f-table th.sortable { cursor: pointer; touch-action: manipulation; }
+#f-table th.sortable:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+#f-table th.active { color: var(--signal); }
+
+/* Run id stays put while the rest of a wide table scrolls under a thumb. */
+#f-table th:first-child, #f-table td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--ground);
+}
+#f-table th:first-child { z-index: 3; background: var(--panel); }
+#f-table td:first-child { font-weight: 600; color: var(--ink); }
+
+#f-table tbody tr {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+#f-table tbody tr:active,
+#f-table tbody tr:active td:first-child { background: var(--panel); }
+#f-table tbody tr:focus-visible { outline: 2px solid var(--signal); outline-offset: -2px; }
+
+#f-table .pnl.pos { color: var(--long); font-weight: 650; }
+#f-table .pnl.neg { color: var(--short); font-weight: 650; }
+
+/* ------------------------------------------------------- chart page: back */
+
+#back {
+  flex: 0 0 auto;
+  min-height: var(--tap);
+  min-width: 52px;
+  padding: 0 12px;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  background: var(--ground);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 600;
+}
+#back:active { background: var(--hairline); }
+#back:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+#run-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  white-space: nowrap;
+  overflow: hidden;
+}
+#run-head .rid { color: var(--ink); font-weight: 600; }
+#run-head .meta { overflow: hidden; text-overflow: ellipsis; }
+
+/* ------------------------------------------------------------- timeframes */
+
+#timeframes {
+  flex: 0 0 auto;
+  display: flex;
+  gap: 6px;
+  padding: 7px 12px 0;
+  background: var(--panel);
+}
+
+#timeframes button {
+  flex: 1;
+  min-height: 36px;
+  padding: 0;
+  border: 1px solid var(--hairline);
+  border-radius: 7px;
+  background: var(--ground);
+  color: var(--ink-dim);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12.5px;
+  font-weight: 650;
+  letter-spacing: .02em;
+}
+#timeframes button[aria-pressed="true"] {
+  color: var(--ink);
+  border-color: var(--ink-dim);
+  background: var(--hairline);
+}
+#timeframes button:active { background: var(--hairline); }
+#timeframes button:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+#timeframes button[disabled] { opacity: .5; }
+
+/* ═════════════════════════════════════════════════════════════ run overview */
+
+#hero {
+  padding: 14px 12px 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.hero-pnl {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+.hero-pnl #h-pnl { font-size: 30px; font-weight: 700; letter-spacing: -.01em; }
+.hero-pnl #h-pnl.pos { color: var(--long); }
+.hero-pnl #h-pnl.neg { color: var(--short); }
+
+.hero-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  color: var(--ink);
+}
+.hero-facts .lbl {
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-right: 4px;
+}
+
+.panel { border-bottom: 1px solid var(--hairline); }
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding: 10px 12px 6px;
+  font-size: 12.5px;
+  font-weight: 650;
+  color: var(--ink);
+}
+.panel-hint {
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  font-weight: 400;
+}
+.panel-note {
+  padding: 0 12px 10px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+#pnl-chart { height: 40dvh; min-height: 220px; touch-action: pan-y; }
+
+.cta { padding: 12px; }
+.cta button { width: 100%; min-height: 50px; font-size: 16px; }
+
+/* label / value pairs used by the breakdown */
+.kv {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 5px 12px;
+  padding: 2px 12px 12px;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+}
+.kv .k { color: var(--ink-dim); white-space: nowrap; }
+.kv .n { color: var(--ink); text-align: right; white-space: nowrap; }
+.kv .m { text-align: right; white-space: nowrap; }
+.kv .m.pos { color: var(--long); }
+.kv .m.neg { color: var(--short); }
+.kv .grp {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#fold-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  white-space: nowrap;
+}
+#fold-table th, #fold-table td { padding: 7px 12px; border-bottom: 1px solid var(--hairline); }
+#fold-table thead th {
+  color: var(--ink-dim);
+  font-size: 9.5px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  font-weight: 650;
+}
+#fold-table tbody tr:last-child td { border-bottom: 0; }
+#fold-table .pos { color: var(--long); }
+#fold-table .neg { color: var(--short); }
+
+/* ------------------------------------------------------- trade context drawer */
+
+#context {
+  flex: 0 0 auto;
+  background: var(--panel);
+  border-top: 1px solid var(--hairline);
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+#context > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 34px;
+  padding: 6px 12px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
+}
+#context > summary::-webkit-details-marker { display: none; }
+#context > summary .hint {
+  font-size: 10px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+#context[open] > summary .hint::after { content: " ▾"; }
+#context:not([open]) > summary .hint::after { content: " ▸"; }
+
+#context .ctx {
+  padding: 2px 12px 10px;
+  max-height: 40dvh;
+  overflow-y: auto;
+  font-size: 11px;
+}
+.ctx .grp {
+  margin: 8px 0 3px;
+  font-size: 9.5px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.ctx .grp:first-child { margin-top: 2px; }
+.ctx .row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+}
+.ctx .row .k { color: var(--ink-dim); white-space: nowrap; }
+.ctx .row .v { color: var(--ink); text-align: right; white-space: nowrap; }
+
+/* intended levels read as secondary everywhere they appear */
+.ctx .row.intended .v { color: var(--ink-dim); }
+.ctx .row.executed .v { color: var(--ink); font-weight: 600; }
+
+.ctx .missing {
+  margin-top: 8px;
+  padding: 7px 9px;
+  border: 1px dashed var(--hairline);
+  border-radius: 6px;
+  color: var(--ink-dim);
+  font-size: 10px;
+  line-height: 1.5;
+}
+.ctx .missing b { color: var(--ink); font-weight: 600; }
+
+/* -------------------------------------------------- custom x-scaling strip */
+
+/* Sits over the time axis only. Inset from the right so the price axis keeps
+   its own vertical drag, and only as tall as the axis so the pane keeps pan
+   and pinch. `touch-action: none` is what lets us take the horizontal drag. */
+#xscale {
+  position: absolute;
+  left: 0;
+  right: 68px;              /* clear of rightPriceScale.minimumWidth */
+  bottom: 0;
+  height: 44px;             /* matches timeScale.minimumHeight */
+  z-index: 3;
+  touch-action: none;
+  cursor: ew-resize;
+  background: transparent;
+}
+
+/* TEMP DIAGNOSTIC — enabled only by `xdiag=1` in the chart URL. */
+#xscale[data-diagnostic="true"] {
+  background: color-mix(in srgb, var(--signal) 18%, transparent);
+  outline: 2px solid var(--signal);
+  outline-offset: -2px;
+}
+
+#xscale-debug {
+  position: fixed;
+  left: 4px;
+  right: 4px;
+  bottom: calc(4px + env(safe-area-inset-bottom));
+  z-index: 10000;
+  padding: 5px 7px;
+  border: 1px solid var(--signal);
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--ground) 92%, transparent);
+  color: var(--ink);
+  font: 10px/1.35 var(--mono);
+  font-variant-numeric: tabular-nums;
+  white-space: pre-wrap;
+  pointer-events: none;
+}

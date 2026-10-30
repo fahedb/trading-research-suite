@@ -1,0 +1,128 @@
+{
+  "schema": "research-experiment-config-v1",
+  "integrity_mode": "full",
+  "dataset": {
+    "dataset_id": "XAUUSD_S_M1_TRAIN_V1",
+    "manifest_sha256": "30ca7b4dbec4c7565d6bba312ae5c7d79fe9d7645ecd3c6868df89e62dff374e",
+    "role": "train"
+  },
+  "split_policy": {
+    "adr": "ADR-0012",
+    "policy_version": "v1",
+    "policy_sha256": "b7e0f582149509b26e53bcaefc8e4c3e36cadf2e7f558984fadb79bbe73405eb"
+  },
+  "bounds": {
+    "context_start": 1577926800,
+    "eval_start": 1635374280,
+    "eval_end": 1703894160
+  },
+  "features": [
+    {
+      "name": "multi_confluence_m15_v1",
+      "version": 1,
+      "params": {
+        "atr_length": 14,
+        "base_grid_seconds": 900,
+        "base_phase_offset_seconds": 0,
+        "ema_fast_length": 50,
+        "ema_slow_length": 200,
+        "ema_window": 2000,
+        "level_atr_range": {"__float_hex__": "0x1.3333333333333p-1"},
+        "level_grid_seconds": [14400, 21600, 28800, 43200, 604800],
+        "level_phase_offset_seconds": [0, 0, 0, 0, 345600],
+        "liquidity_lookback": 20,
+        "max_level_age_bars": 52,
+        "max_trend_age_bars": 512,
+        "minimum_score": 4,
+        "pivot_left": 5,
+        "pivot_right": 5,
+        "rma_window": 300,
+        "rsi_length": 14,
+        "rsi_long_level": 45,
+        "rsi_short_level": 55,
+        "trend_atr_range": {"__float_hex__": "0x1.0000000000000p-1"}
+      }
+    }
+  ],
+  "representation": null,
+  "model": {
+    "name": "multi_confluence_gate_v1",
+    "version": 1,
+    "params": {}
+  },
+  "training_outcome": null,
+  "evaluation_outcomes": [
+    {
+      "name": "forward_log_return_v1",
+      "version": 1,
+      "params": {
+        "boundary_policy": "nan",
+        "decision_delay_rows": 1,
+        "horizon_rows": 240,
+        "reference_price_column": "close"
+      }
+    },
+    {
+      "name": "forward_log_return_v1",
+      "version": 1,
+      "params": {
+        "boundary_policy": "nan",
+        "decision_delay_rows": 1,
+        "horizon_rows": 60,
+        "reference_price_column": "close"
+      }
+    },
+    {
+      "name": "forward_log_return_v1",
+      "version": 1,
+      "params": {
+        "boundary_policy": "nan",
+        "decision_delay_rows": 1,
+        "horizon_rows": 720,
+        "reference_price_column": "close"
+      }
+    }
+  ],
+  "policies": [
+    {
+      "name": "threshold_v1",
+      "version": 1,
+      "params": {
+        "output_column": "score",
+        "threshold": {"__float_hex__": "0x0.0p+0"}
+      }
+    }
+  ],
+  "evaluators": [
+    {
+      "name": "sign_accuracy_v1",
+      "version": 1,
+      "params": {
+        "min_effective_samples": 1,
+        "outcome_column": "target.forward_log_return",
+        "output_column": "score"
+      }
+    },
+    {
+      "name": "rank_ic_v1",
+      "version": 1,
+      "params": {
+        "min_effective_samples": 2,
+        "outcome_column": "target.forward_log_return",
+        "output_column": "score"
+      }
+    }
+  ],
+  "execution": null,
+  "trade_evaluators": [],
+  "folds": {
+    "fit_rows": 3,
+    "eval_rows": 153883,
+    "step_rows": 153883,
+    "embargo_rows": 0,
+    "purge_override": null
+  },
+  "seed": null,
+  "access_reason": null,
+  "declared_lockbox_evaluation": false
+}

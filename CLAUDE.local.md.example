@@ -1,0 +1,15 @@
+# Local configuration template
+
+Copy to `CLAUDE.local.md`, which is ignored by Git. Use paths for your machine.
+Do not store credentials or account details here.
+
+- Dataset root (immutable): /path/to/research-data
+- Generated views: /path/to/research-views
+- Runs root: /path/to/research-runs
+- Artifact cache: /path/to/research-runs/cache
+- Index: /path/to/research-runs/index/runs.sqlite3
+- Audit log: /path/to/research-runs/audit.jsonl
+- Temporary files: /path/to/research-runs/tmp
+
+Keep these directories outside the checkout. Select worker and memory limits
+for your machine. Preserve the engine's BLAS thread clamps in parallel workers.
