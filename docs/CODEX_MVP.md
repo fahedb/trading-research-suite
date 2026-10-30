@@ -19,8 +19,8 @@ slice and remain requirements for the broader release.
 | Component | Current state | Remaining work |
 | --- | --- | --- |
 | Research engine | Strict configurations, features/models/policies, evaluations, simulation, immutable run records, verification | A supported user-facing example that runs without private data |
-| Engine commands | `run`, `status`, `list`, `verify`, index/query/compare commands | A small, validated tool adapter; no generic shell or arbitrary-code tool |
-| Background execution | Detached whole-run workers, heartbeat and terminal states | Setup checks and an end-to-end disconnect test on the supported platform |
+| Engine commands | Bounded adapter for the frozen Gaps workflow | Broader templates; no generic shell or arbitrary-code tool |
+| Background execution | Detached engine worker verified after MCP disconnect on Linux | More platforms and installation environments |
 | Explorer | Real result readers, run overview, trade charts and timeframes | Start/configure it for the user's workspace and publish the completed run to its index |
 | Existing synthetic demo | Generated in-memory prices and trades for UI preview | It is not a research run and cannot stand in for the engine example |
 | MCP server | Local stdio server with seven tools | Broader templates after the frozen Gaps workflow |
@@ -147,7 +147,7 @@ synthetic provenance clearly labelled; no new cost-verification claim is made.
 | --- | --- | --- |
 | 0 | Source mapping and specification | Complete |
 | 1 | Existing Gaps results through MCP and Explorer | Implemented; recorded-file checks, unchanged source artifacts and real Codex tool invocation verified |
-| 2 | Exact frozen Gaps rerun | Implemented; immutable prepared inputs, detached engine CLI and durable retry guard |
+| 2 | Exact frozen Gaps rerun | Implemented; a canonical rerun completed after MCP disconnect and repeating its plan returned the same run |
 | 3 | Codex plugin and Skill | Installed and discovered in a fresh Codex app-server session; local MCP invocation verified without an LLM call |
 | 4 | Standalone synthetic engine example | Planned; UI preview alone is insufficient |
 | 5 | Personal import and dataset catalog | Planned; both must create validated, identity-pinned datasets |
@@ -167,7 +167,11 @@ and changed-template refusal, file corruption, read-only status/results,
 changed plans, duplicate requests, uncertain launches and active-run blocking.
 The installed plugin was also loaded through Codex CLI 0.163.0's app-server;
 its Skill, seven tools and actual historical-results invocation were verified.
-No model-generated interpretation is claimed by that protocol check.
+No model-generated interpretation is claimed by that protocol check. A real
+canonical TRAIN rerun also completed in a separate workspace through the MCP
+start tool after its client disconnected. A repeat start returned the same
+receipt. The original run and dataset roots retained their file sizes and
+modification times; both original source repositories remained clean.
 
 See [ADR-0030](adr/ADR-0030-codex-gaps-adapter.md) for the approved boundary.
 Public installation includes no private market data or run files. The original
